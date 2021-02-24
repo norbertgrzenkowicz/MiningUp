@@ -1,6 +1,8 @@
 The Dungeon
 
-Prosta gra powstała na potrzeby zdania przedmiotu na studia. Została napisana w całości w c++ wykorzystując bibliotekę SFML.
+ABY WŁĄCZYĆ GRĘ, potrzebne są pliki .dll biblioteki SFML w folderze z kodem i zainstalowanie SFML do IDE.
+
+Prosta gra powstała na potrzeby zdania przedmiotu na studia. Została napisana w całości w c++ w MS Visual Studio wykorzystując bibliotekę SFML.
 Gra polega na zebraniu jak największej ilości surowców podczas ciągłego podnoszenia się poziomu lawy, której kontakt wraz z graczem kończy grę.
 Następnie wyniki są zapisane i wyświetlane w menu gry.
 
