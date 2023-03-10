@@ -9,14 +9,14 @@ Background::Background(sf::Vector2u window)
 	gameBackground = new sf::Sprite;
 	gameOutline = new sf::RectangleShape;
 
-	//Inicjalizacja t³a szarego
+	//Inicjalizacja ta szarego
 	sf::Color backgroundColor(50, 50, 50);
 	background->setFillColor(backgroundColor);
 	background->setSize(sf::Vector2f(window.x, window.y));
 	background->setPosition(sf::Vector2f(0.f, 0.f));
 
 
-	//Inicjalizacja elementów œrodowiska gracza
+	//Inicjalizacja elementw rodowiska gracza
 	gameBackground->setTexture(backgroundTexture);
 	gameBackground->setPosition(sf::Vector2f(360.f, 0.f));
 	gameBackground->setScale(4.f, 4.f);
@@ -38,7 +38,7 @@ void Background::drawBackground(sf::RenderWindow& window)
 	window.draw(*background);
 }
 
-void Background::drawGameBackground(sf::RenderWindow& window)
+void Background::draw(sf::RenderWindow& window)
 {
 	window.draw(*background);
 	window.draw(*gameOutline);

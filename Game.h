@@ -4,34 +4,34 @@
 class Game
 {
 private:
-	sf::RenderWindow *window;
+	sf::RenderWindow window;
 	sf::Clock dtClock;
 	float dt;
-	//typ wyliczeniowy potrzebny do zmieniania stanu gry miêdzy menu, wybieraniem trudnosæi, wyników graczy oraz gry
+	//typ wyliczeniowy potrzebny do zmieniania stanu gry midzy menu, wybieraniem trudnosi, wynikw graczy oraz gry
 	enum State
 	{
 		STATE_MENU,					//menu
-		STATE_CHOOSINGDIFFICULTY,	//wybieranie poziomu trudnoœci gry
+		STATE_CHOOSINGDIFFICULTY,	//wybieranie poziomu trudnoci gry
 		STATE_PLAYERSCHART,			//Wyniki graczy
 		STATE_GAME					//gra
 	};
 	enum State state_;
 
 	//Inicjalizacja klas
-	UserInterface* UI;	//Interfejs gracza
-	Camera* gameCamera;	//Kamera
-	player* gracz;		//Jednostka sterowalna
-	TileMap* mapa;		//Otoczenie gracza
-	Lava* lawa;			
-	Background* tlo;	//Wczytywanie t³a
+	std::unique_ptr<UserInterface> UI;	//Interfejs gracza
+	std::unique_ptr<Camera> gameCamera;	//Kamera
+	std::unique_ptr<player> gracz;		//Jednostka sterowalna
+	std::unique_ptr<TileMap> mapa;		//Otoczenie gracza
+	std::unique_ptr<Lava> lawa;			
+	std::unique_ptr<Background> tlo;	//Wczytywanie ta
 
 	
 public:
 	Game();
 	~Game();
 
-	void run();							//Metoda zawiera g³ówn¹ pêtle gry wraz z jej wszystkimi elementami
+	void run();							//Metoda zawiera gwn ptle gry wraz z jej wszystkimi elementami
 	void checkGameState();				//Sprawdza oraz zmienia stany gry
-	void loadSavedGame();				//£aduje grê
-	void loadMenuAfterDeath(bool back);	//£aduje menu po przegraniu gry
+	void loadSavedGame();				//aduje gr
+	void loadMenuAfterDeath(bool back);	//aduje menu po przegraniu gry
 };

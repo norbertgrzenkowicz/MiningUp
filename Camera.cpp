@@ -12,10 +12,10 @@ Camera::~Camera()
 	delete view;
 }
 
-void Camera::followplayer(sf::RenderWindow* window, sf::Vector2f playerPos, sf::FloatRect playerBounds, bool lavaTouched)
+void Camera::followplayer(sf::RenderWindow& window, sf::Vector2f playerPos, sf::FloatRect playerBounds, bool lavaTouched)
 {
-	if (lavaTouched != true) //póki gracz jest ¿ywy
-		view->setCenter(960.f, playerPos.y + playerBounds.height); //Kamera jest wyœrodkowana na graczu w osi Y
+	if (lavaTouched != true) //pki gracz jest ywy
+		view->setCenter(960.f, playerPos.y + playerBounds.height); //Kamera jest wyrodkowana na graczu w osi Y
 
-	window->setView(*view);
+	window.setView(*view);
 }

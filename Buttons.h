@@ -1,19 +1,21 @@
 #include "Myszka.h"
-class Buttons
+#include "Entity.h"
+
+class Buttons : public Entity_iface
 {
 private:
 	
 	sf::Font font; //czcionka
 
 	//Elementy przycisku
-	sf::RectangleShape* button;
+	sf::RectangleShape button;
 	sf::RectangleShape* obramowanie;
 	sf::FloatRect* buttonBounds;
 	sf::Sprite* buttonSprite;
 	
 	//Elementy tekstu
 	sf::Text* tekst;
-	sf::FloatRect* tekstBounds;
+	sf::FloatRect tekstBounds;
 	std::string tresc;
 	
 	//Pozycje
@@ -23,17 +25,17 @@ private:
 	//tekstury
 	sf::Texture stopTexture, backtogameTexture, renewTexture, backtomenuTexture, pickaxeT;
 
-	//Sprite kilofu do menu wyboru poziomu trudnoœci
+	//Sprite kilofu do menu wyboru poziomu trudnoci
 	sf::Sprite pickaxe;
 
 
 public:
 	bool Pause;
 	Buttons();
-	Buttons(int whichButton, sf::RenderWindow& window); //Konstruktor wszystkich przycisków, whichButton wskazuje jaki przycisk ma zostaæ przywo³any
+	Buttons(int whichButton, sf::RenderWindow& window); //Konstruktor wszystkich przyciskow, whichButton wskazuje jaki przycisk ma zostal przywolany
 
 	~Buttons();
-	bool isClicked(sf::Event& event, sf::RenderWindow& window); //Metoda sprawdzaj¹ca czy przycisk zosta³ klikniêty, rysuje szary element na przycisku jeœli myszka jest wewn¹trz przycisku
-	void draw(sf::RenderWindow& window);						//rysowanie przycisków i tekstu
-	void drawSprites(sf::RenderWindow& window);					//rysowanie kilofów
+	bool isClicked(sf::Event& event, sf::RenderWindow& window); //Metoda sprawdzajaca czy przycisk zostal klikniety, rysuje szary element na przycisku jesli myszka jest wewnatrz przycisku
+	void draw(sf::RenderWindow& window) final;						//rysowanie przyciskow i tekstu
+	void drawSprites(sf::RenderWindow& window);					//rysowanie kilofow
 };

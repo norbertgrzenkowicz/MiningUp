@@ -2,15 +2,15 @@
 
 
 
-Menu::Menu()
+Menu::Menu() :
+ loadGame(false),
+	game_start(false),
+	menu_start(true),
+	set_newGame(false),
+	choose_difficulty(false),
+	playersChart(false),
+	selectedMenuitem(0)
 {
-	loadGame = false;
-	game_start = false;
-	menu_start = true; 
-	set_newGame = false;
-	choose_difficulty = false;
-	playersChart = false;
-	selectedMenuitem = 0;
 }
 
 Menu::Menu(float width, float height)
@@ -21,8 +21,8 @@ Menu::Menu(float width, float height)
 		std::cout<< "czcionka niezaladowana";
 	}
 
-	//Zawartoœæ elementów menu g³ównego
-	char h[][50] =
+	//Zawartosc elementow menu glownego
+	std::vector<std::string> h =
 	{
 		"New game",
 		"Load game",
@@ -30,7 +30,7 @@ Menu::Menu(float width, float height)
 		"Quit"
 	};
 
-	//Inicjalizacja pomocniczych stanów gry
+	//Inicjalizacja pomocniczych stanow gry
 	loadGame = false;
 	game_start = false;
 	menu_start = true;
@@ -39,7 +39,7 @@ Menu::Menu(float width, float height)
 	playersChart = false;
 	selectedMenuitem = 0;
 
-	//Inicjalizacja tytu³u
+	//Inicjalizacja tytulu
 	tytul = new sf::Text;
 
 	tytul->setFont(font);
@@ -48,7 +48,7 @@ Menu::Menu(float width, float height)
 	tytul->setCharacterSize(60);
 	tytul->setPosition(width / 2 - tytul->getGlobalBounds().width/2, 50);
 
-	//Inicjalizacja po³o¿enia elementów oraz ich w³aœciwosci
+	//Inicjalizacja polozenia elementow oraz ich wlasciwosci
 	for (int i = 0; i < MAX_ITEMS; i++)
 	{
 		menu[i].setFont(font);
@@ -66,7 +66,7 @@ Menu::~Menu()
 	delete tytul;
 }
 
-void Menu::drawMenu(sf::RenderWindow& window)
+void Menu::draw(sf::RenderWindow& window)
 {
 	for (int i = 0; i < MAX_ITEMS; i++)
 	{
@@ -106,12 +106,12 @@ void Menu::moving(sf::RenderWindow& window, sf::Event& event)
 
 		if (event.key.code == sf::Keyboard::Return)
 		{
-			if (this->get_SelectedItem() == 0)		//Przejscie do wyboru poziomu trudnoœci
+			if (this->get_SelectedItem() == 0)		//Przejscie do wyboru poziomu trudnoci
 			{
 				choose_difficulty = true;
 				menu_start = false;
 			}
-			else if (this->get_SelectedItem() == 1) //Przejscie do ³adowania zapisanej gry
+			else if (this->get_SelectedItem() == 1) //Przejscie do adowania zapisanej gry
 			{
 				loadGame = true;
 				menu_start = false;
@@ -121,7 +121,7 @@ void Menu::moving(sf::RenderWindow& window, sf::Event& event)
 				playersChart = true;
 				menu_start = false;
 			}
-			else if (this->get_SelectedItem() == MAX_ITEMS - 1) //Wyjœcie z gry
+			else if (this->get_SelectedItem() == MAX_ITEMS - 1) //Wyjscie z gry
 				window.close();
 		}
 	}

@@ -1,21 +1,23 @@
 #include "Game.h"
 
+// #include <chrono>
+// using namespace std::chrono;
 
 
-Game::Game()
+Game::Game() :
+	window(sf::VideoMode(1920, 1080), "The Dungeon")	//Inicjalizacja okna
 {
-	this->window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "The Dungeon");	//Inicjalizacja okna
-	window->setFramerateLimit(165);													//Ustawienie limitu klatek gry
+	window.setFramerateLimit(165);													//Ustawienie limitu klatek gry
 
 	//Inicjalizacja klas
-	UI = new UserInterface(*window);
-	gracz = new player;
-	lawa = new Lava;
-	mapa = new TileMap;
-	gameCamera = new Camera(window->getSize());
-	tlo = new Background(window->getSize());
+	UI = std::make_unique<UserInterface>(window);
+	gracz = std::make_unique<player>();
+	lawa = std::make_unique<Lava>();
+	mapa = std::make_unique<TileMap>();
+	gameCamera = std::make_unique<Camera>(window.getSize());
+	tlo = std::make_unique<Background>(window.getSize());
 	
-	//Inicjalizacja pocz¹tkowego stanu gry, Menu
+	//Inicjalizacja poczatkowego stanu gry, Menu
 	state_ = STATE_MENU;
 
 	//Czas rzeczywisty
@@ -24,13 +26,13 @@ Game::Game()
 
 Game::~Game()
 {
-	delete UI, gameCamera, gracz, mapa, lawa, tlo, window;
 }
 
 void Game::run()
 {
-	while (window->isOpen())
+	while (window.isOpen())
 	{
+		// auto start = high_resolution_clock::now(); 6-8 at menu, 10-18 ingame
 		sf::Event event;
 		dt = dtClock.restart().asSeconds();
 
@@ -39,76 +41,73 @@ void Game::run()
 		switch (state_)
 		{
 		case STATE_MENU:		//Stan menu
-			while (window->pollEvent(event))
+			while (window.pollEvent(event))
 			{
 				if (event.type == sf::Event::Closed)
-					window->close();
-				UI->menu->moving(*window, event);	//poruszanie siê w menu
+					window.close();
+				UI->menu->moving(window, event);	//poruszanie sie w menu
 			}
 
-			window->clear();
-			tlo->drawBackground(*window);			//rysowanie t³a
-			UI->menu->drawMenu(*window);			//rysowanie menu
+			window.clear();
+			tlo->drawBackground(window);			//rysowanie tla
+			UI->menu->draw(window);			//rysowanie menu
 
-			window->display();
+			window.display();
 			break;
 
-		case STATE_CHOOSINGDIFFICULTY:	//Stan wybierania poziomu trudnoœci
-			while (window->pollEvent(event))
+		case STATE_CHOOSINGDIFFICULTY:	//Stan wybierania poziomu trudnosci
+			while (window.pollEvent(event))
 			{
 				if (event.type == sf::Event::Closed)
-					window->close();
+					window.close();
 
 				if (event.type == sf::Event::KeyPressed)
 				{
-					if (event.key.code == sf::Keyboard::Escape) //cofniêcie siê do Menu
+					if (event.key.code == sf::Keyboard::Escape) //cofniecie sie do Menu
 					{
 						UI->menu->choose_difficulty = false;
 						UI->menu->menu_start = true;
 					}
 				}
 			}
-			window->clear();
-			tlo->drawBackground(*window);			//rysowanie t³a
-			UI->chooseDifficulty(event, *window);	//Rysowanie oraz funkcjonowanie wyboru poziomu trudnoœci
+			window.clear();
+			tlo->drawBackground(window);			//rysowanie tla
+			UI->chooseDifficulty(event, window);	//Rysowanie oraz funkcjonowanie wyboru poziomu trudnoci
 
-			window->display();
+			window.display();
 			break;
 		
-		case STATE_PLAYERSCHART:	//Stan wyników graczy
-			while (window->pollEvent(event))
+		case STATE_PLAYERSCHART:	//Stan wynikow graczy
+			while (window.pollEvent(event))
 			{
 				if (event.type == sf::Event::Closed)
-					window->close();
+					window.close();
 				
-				if (event.type == sf::Event::KeyPressed)
+				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) //cofniecie sie do Menu
 				{
-					if (event.key.code == sf::Keyboard::Escape) //cofniêcie siê do Menu
-					{
-						UI->menu->playersChart = false;
-						UI->menu->menu_start = true;
-					}
+					UI->menu->playersChart = false;
+					UI->menu->menu_start = true;
 				}
 			}
-			window->clear();	
-			tlo->drawBackground(*window);			//rysowanie t³a
-			UI->playersScore(event, *window);		//Rysowanie wyników
+			window.clear();	
+			tlo->drawBackground(window);			//rysowanie tla
+			UI->playersScore(event, window);		//Rysowanie wynikow
 
-			window->display();
+			window.display();
 			break;
 
 
 		case STATE_GAME:	//Stan gry
 
-			while (window->pollEvent(event))
+			while (window.pollEvent(event))
 			{
 				if (event.type == sf::Event::Closed)
 				{
-					if (gracz->getLavaTouched() != true) //Przy wy³¹czeniu okna nastêpuje zapis gry
+					if (gracz->getLavaTouched() != true) //Przy wylaczeniu okna nastepuje zapis gry
 						UI->save(event, gracz->getPosition(), mapa->get_typ_kafli(), lawa->getLavaSurfacePos(), mapa->getGatheredDiamonds(), mapa->getGatheredIron());
-					window->close();
+					window.close();
 				}
-				if (event.type == sf::Event::KeyPressed) //Zapytanie czy chce siê wyjœæ z gry
+				if (event.type == sf::Event::KeyPressed) //Zapytanie czy wyjsc z gry
 				{
 					if (event.key.code == sf::Keyboard::Escape)
 					{
@@ -117,17 +116,17 @@ void Game::run()
 				}
 			}
 
-			window->clear();
+			window.clear();
 			//mapatimingChange(dt);
 
-			tlo->drawGameBackground(*window); //Rysowanie t³a gry
+			tlo->draw(window);
 
-			gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched()); //Kamera pod¹¿aj¹ca za graczem
+			//odpalenie kamery
+			gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched());
 
-
-			if (UI->menu->set_newGame == true) //Nowa gra
+			if (UI->menu->set_newGame) //Nowa gra
 			{
-				//Ustawianie mno¿ników trudnoœci oraz tekstury
+				//Ustawianie mnoznikow trudnosci oraz tekstury
 				mapa->setDifficultyMultiplier(UI->get_difficulty());
 				lawa->setDifficultyMultiplier(UI->get_difficulty());
 				gracz->setPickaxe(UI->get_difficulty());
@@ -142,9 +141,9 @@ void Game::run()
 				UI->menu->set_newGame = false;
 			}
 
-			if (UI->get_renew() == true) //Powtórzenie gry
+			if (UI->get_renew()) //Powtorzenie gry
 			{
-				//Ustawianie mno¿ników trudnoœci oraz tekstury
+				//Ustawianie mnoznikow trudnosci oraz tekstury
 				mapa->setDifficultyMultiplier(UI->get_difficulty());
 				lawa->setDifficultyMultiplier(UI->get_difficulty());
 				gracz->setPickaxe(UI->get_difficulty());
@@ -152,66 +151,68 @@ void Game::run()
 				//generowanie gry
 				mapa->generateTiles();
 				mapa->map();
-				window->setView(window->getDefaultView());
+				window.setView(window.getDefaultView());
 				gracz->setPositionDefault();
 				lawa->setPositionDefault();
-				gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched()); //przywrócenie kamery pod¹¿aj¹cej za graczem
+				gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched()); //przywrocenie kamery podazajacej za graczem
 				mapa->setDiamondsDefault();
 				UI->set_renew(false);
 				UI->Pause = false;
 			}
 
-			if (gracz->getLavaTouched() != true) //Póki gracz jest ¿ywy
+			if (!gracz->getLavaTouched()) //Poki gracz jest zywy
 			{
-				if (UI->Pause != true) //Póki gra nie jest zapauzowana
+				if (!UI->Pause) //Poki gra nie jest zapauzowana
 				{
-					mapa->positioning(*window, gracz->getPosition(), gracz->getBounds());	//Pozycjonowanie myszki
-					gracz->objectCollisionToTileMap(mapa);									//Kolizja obiektów
-					mapa->destroyTile(dt, event);											//Niszczenie bloków
+					mapa->positioning(window, gracz->getPosition(), gracz->getBounds());	//Pozycjonowanie myszki
+					gracz->objectCollisionToTileMap(mapa.get());									//Kolizja obiektow
+					mapa->destroyTile(dt, event);											//Niszczenie blokow
 					
-					//Dynamiczne generowanie siê pierwszych bloków wraz z niszczeniem ostatnich wzglêdem pozycji graczy
-					window->setView(window->getDefaultView());
+					//Dynamiczne generowanie sie pierwszych blokow wraz z niszczeniem ostatnich wzgledem pozycji graczy
+					window.setView(window.getDefaultView());
 					gracz->setPosition(mapa->tilesDown(gracz->getPosition()));
 					lawa->isTileDown(mapa->get_isTileDown());			
 					lawa->moveUp(dt); //ruch lawy
-					gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched()); //przywrócenie kamery pod¹¿aj¹cej za graczem
+					gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched()); //przywrocenie kamery podazaajacej za graczem
 
 					//Ruch gracza
 					gracz->move(dt, event); 
-					gracz->didLavaTouched(lawa->getLavaSurfacePos()); //Jeœli gracz dotknie lawy, gra zostaje zakoñczona.
+					gracz->didLavaTouched(lawa->getLavaSurfacePos()); //Jesli gracz dotknie lawy, gra zostaje zakoczona.
 
 					if (event.type == sf::Event::KeyPressed)
 					{
-						if (event.key.code == sf::Keyboard::F4) // zapis gry podczas klikniêcia przycisku F4
+						if (event.key.code == sf::Keyboard::F4) // zapis gry podczas klikniecia przycisku F4
 							UI->save(event, gracz->getPosition(), mapa->get_typ_kafli(), lawa->getLavaSurfacePos(), mapa->getGatheredDiamonds(), mapa->getGatheredIron());
 					}
 				}
 			}
 
-
 			//rysowanie elementow gry
 
-			mapa->draw(*window);
-			mapa->drawDestroyAnimation(*window);
-			lawa->draw(*window);
+			mapa->draw(window);
+			mapa->drawDestroyAnimation(window);
+			lawa->draw(window);
 			gracz->draw(window);
 
 			//reset kamery
-			window->setView(window->getDefaultView());
+			window.setView(window.getDefaultView());
 
 			//UI
-			//window->draw(mapa->getText()); //Odkomentowaæ dla uruchomienia dodatkowego interfejsu pozycji myszki
+			//window.draw(mapa->getText()); //Odkomentowac dla uruchomienia dodatkowego interfejsu pozycji myszki
 
-			if (gracz->getLavaTouched() != true)
-				UI->inGameUI(event, *window, mapa->getGatheredDiamonds(), mapa->getGatheredIron()); //Interfejs gracza podczas gry
-			if (gracz->getLavaTouched() == true) //Œmieræ = intersekcja gracza z law¹
+			if (!gracz->getLavaTouched())
+				UI->inGameUI(event, window, mapa->getGatheredDiamonds(), mapa->getGatheredIron()); //Interfejs gracza podczas gry
+			if (gracz->getLavaTouched()) //smierc = intersekcja gracza z lawa
 			{
 				UI->saveDead(mapa->getGatheredDiamonds(), mapa->getGatheredIron(), UI->get_difficulty()); //zapis statystyk
-				this->loadMenuAfterDeath(UI->endGameMenu(gracz->death(dt, gracz->getLavaTouched()), event, *window)); //Menu poœmiertne
+				this->loadMenuAfterDeath(UI->endGameMenu(gracz->death(dt, gracz->getLavaTouched()), event, window)); //Menu posmiertne
 			}
-			window->display();
+			window.display();
 			break;
 		}
+		// auto stop = high_resolution_clock::now();
+		// auto duration = duration_cast<milliseconds>(stop - start);
+		// std::cout << duration.count() << std::endl;
 	}
 }
 
@@ -221,14 +222,14 @@ void Game::checkGameState()
 	{
 		state_ = STATE_MENU;
 	}
-	if (UI->menu->loadGame == true)				//Wybór wczytania zapisanej gry
+	if (UI->menu->loadGame == true)				//Wybor wczytania zapisanej gry
 	{
 		UI->loadGame();
 		this->loadSavedGame();
 		UI->menu->loadGame = false;
 		UI->menu->game_start = true;
 	}
-	if (UI->menu->choose_difficulty == true)	//stan wybierania poziomu trudnoœci
+	if (UI->menu->choose_difficulty == true)	//stan wybierania poziomu trudnosci
 	{
 		state_ = STATE_CHOOSINGDIFFICULTY;
 	}
@@ -244,7 +245,6 @@ void Game::checkGameState()
 
 void Game::loadSavedGame() //wczytywanie gry
 {
-
 	UI->set_difficulty(UI->get_loadedDifficulty());
 	mapa->setDifficultyMultiplier(UI->get_loadedDifficulty());
 	lawa->setDifficultyMultiplier(UI->get_loadedDifficulty());
@@ -257,9 +257,9 @@ void Game::loadSavedGame() //wczytywanie gry
 	mapa->setIron(UI->get_loadediron());
 }
 
-void Game::loadMenuAfterDeath(bool back) //ustawienie zmiennych potrzebnych do za³adowania menu poœmiertnego
+void Game::loadMenuAfterDeath(bool back) //ustawienie zmiennych potrzebnych do zaladowania menu posmiertnego
 {
-	if (back == true)
+	if (back)
 	{
 		UI->menu->menu_start = true;
 		UI->menu->choose_difficulty = false;

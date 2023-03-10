@@ -23,6 +23,8 @@ SET(SOURCE_FILES
     TileMap.h
     UserInterface.cpp
     UserInterface.h
+    Entity.h
+    Positionable.h
     )
 
     find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)

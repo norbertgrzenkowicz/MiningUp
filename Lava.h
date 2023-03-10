@@ -1,7 +1,7 @@
 #pragma once
 #include "Camera.h"
-
-class Lava
+#include "Positionable.h"
+class Lava : public Positionable
 {
 private:
 	//Cechy graficzne lawy
@@ -15,18 +15,18 @@ private:
 	float yMove;
 	float ySize;
 	
-	//mno¿nik poziomu trudnoœci, zwiêksza b¹dŸ zwiêksza prêdkoœæ poruszania siê lawy
+	//mnonik poziomu trudnoci, zwiksza bd zwiksza prdko poruszania si lawy
 	unsigned int difficultyMultiplier;
 	
 public:
 	Lava();
 	~Lava();
 
-	void moveUp(const float &dt);								//Cykliczny ruch lawy do góry wzglêdem prêdkoœci i czasu
-	void draw(sf::RenderWindow& window);						//Rysowanie lawy
+	void moveUp(const float &dt);								//Cykliczny ruch lawy do gry wzgldem prdkoci i czasu
+	void draw(sf::RenderWindow& window) final;						//Rysowanie lawy
 	sf::Vector2f getLavaSurfacePos();							//Zwraca poziom lawy
-	void setPositionDefault();									//Ustawia pozycjê pocz¹tkow¹
-	void setPosition(sf::Vector2f lavaPos);						//Ustawia pozycjê lawy oraz dolnej czêœci lawy
-	void setDifficultyMultiplier(unsigned int difficulty);		//Ustawia mno¿nik poziomu trudnoœci
-	void isTileDown(bool istiledown);							//zmienia pozycjê ze wzglêdu na wykonanie funkcji TileMap::tileDown()
+	void setPositionDefault() final;									//Ustawia pozycj pocztkow
+	void setPosition(sf::Vector2f entityPos) final;						//Ustawia pozycj lawy oraz dolnej czci lawy
+	void setDifficultyMultiplier(unsigned int difficulty);		//Ustawia mnonik poziomu trudnoci
+	void isTileDown(bool istiledown);							//zmienia pozycj ze wzgldu na wykonanie funkcji TileMap::tileDown()
 };

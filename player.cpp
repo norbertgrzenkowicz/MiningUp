@@ -23,7 +23,7 @@ void player::initVariables()
 	velocity.y = 0.f;
 	dtime = 0;
 	elapsedJump = 0;
-	//Zmienne stanu ¿ycia oraz skakania
+	//Zmienne stanu ycia oraz skakania
 	lavaTouched = false;
 	isJumping = false;
 }
@@ -56,19 +56,19 @@ void player::initTexture()
 	pickaxeArm->setTextureRect(rectArmSprite);
 
 
-	//Rotacja rêki i kilofa
+	//Rotacja rki i kilofa
 	pickaxeArm->setRotation(-45.f);
 	pickaxe->setRotation(45.f);
 
 	pickaxeArm->rotate(0.f);
 	pickaxe->rotate(0.f);
 
-	//Wybranie œrodka obrotu postaci
+	//Wybranie rodka obrotu postaci
 	gracz->setOrigin({ gracz->getLocalBounds().width / 2, 0 });
 	pickaxeArm->setOrigin({-gracz->getLocalBounds().width / 2, 0 });
 	pickaxe->setOrigin({ -gracz->getLocalBounds().width / 2, 0 });
 
-	//Pozycjonowanie pocz¹tkowe rêki, kilofa oraz gracza
+	//Pozycjonowanie pocztkowe rki, kilofa oraz gracza
 	pickaxeArm->setPosition(sf::Vector2f(gracz->getPosition().x - 5, gracz->getPosition().y + 4 + gracz->getGlobalBounds().height / 2));
 	pickaxe->setPosition(sf::Vector2f(pickaxeArm->getPosition().x + 20, gracz->getPosition().y - 10));
 	gracz->setPosition(9 * gridsize, 12 * gridsize);
@@ -117,7 +117,7 @@ void player::move(const float& dt, sf::Event& event)
 		elapsedJump = 0.f;
 	}
 
-	//metody animacji, kolizji oraz pod¹¿ania rêki za graczem
+	//metody animacji, kolizji oraz podania rki za graczem
 	this->moveArm();
 	this->walkingAnimation(dt);
 	this->physics();
@@ -157,7 +157,7 @@ void player::objectCollision(sf::RectangleShape wall)
 	sf::FloatRect wallBounds = wall.getGlobalBounds();
 	hitbox.setPosition(playerBounds.left, playerBounds.top);
 
-	nextPos = playerBounds; //Nastêpna pozycja gracza jako wskaŸnik gdzie znajdzie siê w nastêpnej klatce postaæ bez kolizji
+	nextPos = playerBounds; //Nastpna pozycja gracza jako wskanik gdzie znajdzie si w nastpnej klatce posta bez kolizji
 	nextPos.left += velocity.x;
 	nextPos.top += velocity.y;
 
@@ -174,7 +174,7 @@ void player::objectCollision(sf::RectangleShape wall)
 			gracz->setPosition(gracz->getPosition().x, wallBounds.top - playerBounds.height);
 		}
 
-		//Górna kolizja
+		//Grna kolizja
 		else if (playerBounds.top > wallBounds.top
 			&& playerBounds.top + playerBounds.height > wallBounds.top + wallBounds.height
 			&& playerBounds.left < wallBounds.left + wallBounds.width
@@ -218,7 +218,7 @@ void player::objectCollisionToTileMap(TileMap* map)
 	for (auto& tiles : map->gettileMap()) 
 	{
 		for (auto& tile : tiles)
-			this->objectCollision(tile); //Kolizja dla ka¿dego bloku na mapie
+			this->objectCollision(tile); //Kolizja dla kadego bloku na mapie
 	}
 }
 
@@ -228,7 +228,7 @@ void player::physics()
 	{
 		velocity.y += gravity;
 	}
-	//Przyœpieszenie grawitacyjne postaci
+	//Przypieszenie grawitacyjne postaci
 	velocity.x += acceleration.x; 
 	velocity.y += acceleration.y;
 
@@ -249,7 +249,7 @@ bool player::getLavaTouched()
 
 void player::moveArm()
 {
-	if (velocity.x > 0) //Rêka oraz kilof podczs ruchu w prawo
+	if (velocity.x > 0) //Rka oraz kilof podczs ruchu w prawo
 	{
 		gracz->setScale(1.5f, 1.5f);
 		pickaxeArm->setScale(1.5f, 1.5f);
@@ -265,7 +265,7 @@ void player::moveArm()
 		pickaxe->setPosition(sf::Vector2f(pickaxeArm->getPosition().x + 20, gracz->getPosition().y - 10));
 	}
 
-	else if (velocity.x < 0) //Rêka oraz kilof podczs ruchu w lewo
+	else if (velocity.x < 0) //Rka oraz kilof podczs ruchu w lewo
 	{
 		gracz->setScale(-1.5f, 1.5f);
 		pickaxeArm->setScale(-1.5f, 1.5f);
@@ -281,12 +281,12 @@ void player::moveArm()
 		pickaxe->setPosition(sf::Vector2f(pickaxeArm->getPosition().x - 20, gracz->getPosition().y - 10));
 	}
 
-	if (velocity.x == 0 && gracz->getScale().x ==1.5f) //Rêka oraz kilof podczas ruchu w dó³
+	if (velocity.x == 0 && gracz->getScale().x ==1.5f) //Rka oraz kilof podczas ruchu w d
 	{
 		pickaxeArm->setPosition(sf::Vector2f(gracz->getPosition().x - 5, gracz->getPosition().y + 4 + gracz->getGlobalBounds().height / 2));
 		pickaxe->setPosition(sf::Vector2f(pickaxeArm->getPosition().x + 20, gracz->getPosition().y - 10));
 	}
-	else if (velocity.x == 0 && gracz->getScale().x == -1.5f) //Rêka oraz kilof podczas ruchu w górê
+	else if (velocity.x == 0 && gracz->getScale().x == -1.5f) //Rka oraz kilof podczas ruchu w gr
 	{
 		pickaxeArm->setPosition(sf::Vector2f(gracz->getPosition().x + 5, gracz->getPosition().y + 4 + gracz->getGlobalBounds().height / 2));
 		pickaxe->setPosition(sf::Vector2f(pickaxeArm->getPosition().x - 20, gracz->getPosition().y - 10));
@@ -343,7 +343,7 @@ bool player::death(const float& dt, bool death)
 	if (gracz->getGlobalBounds().top < 22 * gridsize)
 	{
 		gracz->setRotation(-90.f);
-		gracz->move(0, 500 * dt); //Ruch poni¿ej ekranu
+		gracz->move(0, 500 * dt); //Ruch poniej ekranu
 		return true;
 	}
 	else if (gracz->getGlobalBounds().top >= 22 * gridsize)
@@ -368,11 +368,11 @@ void player::setPickaxe(unsigned int difficulty)
 {
 	if (difficulty == 1)
 	{
-		pickaxe->setTextureRect(rectDiamondPickaxeSprite);	//£atwy -> diamentowy kilof
+		pickaxe->setTextureRect(rectDiamondPickaxeSprite);	//atwy -> diamentowy kilof
 	}
 	else if (difficulty == 2)
 	{
-		pickaxe->setTextureRect(rectIronPickaxeSprite);		//Œredni -> ¿elazny kilof
+		pickaxe->setTextureRect(rectIronPickaxeSprite);		//redni -> elazny kilof
 	}
 	else if (difficulty == 3)
 	{
@@ -395,10 +395,10 @@ int player::getGridPosY()
 	return static_cast<int>(gracz->getPosition().y);
 }
 
-void player::draw(sf::RenderWindow* window)
+void player::draw(sf::RenderWindow& window)
 {
-	window->draw(*gracz);
-	window->draw(*pickaxe);
-	window->draw(*pickaxeArm);
+	window.draw(*gracz);
+	window.draw(*pickaxe);
+	window.draw(*pickaxeArm);
 	//window->draw(hitbox); //odkomentuj w celu rysowania hitboxa
 }

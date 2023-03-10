@@ -2,7 +2,7 @@
 
 UserInterface::UserInterface(sf::RenderWindow& window)
 {
-	//Inicjalizacja pomocniczych stanów gry
+	//Inicjalizacja pomocniczych stanw gry
 	renew = false;
 	Pause = false;
 	helpMenuBool = false;
@@ -10,9 +10,9 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 	isLoaded = false;
 	escape = false;
 
-	difficulty = 0;		//Inicjalizacja poziomu trudnoœci
+	difficulty = 0;		//Inicjalizacja poziomu trudnoci
 
-	//Inicjalizacja menu g³ównego
+	//Inicjalizacja menu gwnego
 	 menu = new Menu(window.getSize().x, window.getSize().y); 
 
 	 if (!font.loadFromFile("czcionka.ttf"))
@@ -20,7 +20,7 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 		 std::cout << "czcionka niezaladowana";
 	 }
 
-	 //Inicjalizacja sprite'a licznika surowców
+	 //Inicjalizacja sprite'a licznika surowcw
 	 if (!countUIT.loadFromFile("textures/UI.jpg"));
 	 countUI.setTexture(countUIT);
 	 countUI.setPosition(1530, 85);
@@ -29,7 +29,7 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 	 this->loadPlayers();
 
 
-	 //Inicjalizacja przycisków
+	 //Inicjalizacja przyciskw
 	przyciskStop = new Buttons(0, window);
 	przyciskBackToGame = new Buttons(1, window);
 	przyciskRenew = new Buttons(2, window);
@@ -58,7 +58,7 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 	ButtonsVector.push_back(przyciskBackToMenu);
 
 	
-	//Tekst diamentów oraz ¿elaza wyœwietlanych w trakcie gry
+	//Tekst diamentw oraz elaza wywietlanych w trakcie gry
 	sf::Color diamondColor(77, 230, 225);
 	diamonds->setFont(font);
 	diamonds->setCharacterSize(40);
@@ -69,7 +69,7 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 	iron->setCharacterSize(40);
 	iron->setFillColor(ironColor);
 
-	//Pomocnicza wiadomoœæ o poruszaniu siê miêdzy menu
+	//Pomocnicza wiadomo o poruszaniu si midzy menu
 	escBack->setFont(font);
 	escBack->setFillColor(sf::Color::White);
 	escBack->setString("Kliknij Escape, aby cofnac!");
@@ -77,7 +77,7 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 	escBack->setPosition(50.f, 50.f);
 
 
-	//tekst koñca gry
+	//tekst koca gry
 	gameOver->setFont(font);
 	gameOver->setFillColor(sf::Color::Red);
 	gameOver->setString("Koniec Gry!");
@@ -137,7 +137,7 @@ UserInterface::~UserInterface()
 void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigned int diamondsCounted, unsigned int ironCounted)
 {
 
-	//dynamiczny odczyt zebranych diamentów i ¿elaza
+	//dynamiczny odczyt zebranych diamentw i elaza
 	std::stringstream ssDiamonds;
 	std::stringstream ssIron;
 
@@ -153,7 +153,7 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 	diamonds->setPosition(1660, 100);
 	iron->setPosition(1660, 200);
 
-	//Przycisk stop, pauzuje grê i uruchamia przyciski powrotu do gry, odnowienia gry, powrotu do menu g³ównego
+	//Przycisk stop, pauzuje gr i uruchamia przyciski powrotu do gry, odnowienia gry, powrotu do menu gwnego
 
 
 	window.draw(countUI);
@@ -196,7 +196,7 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 	window.draw(*diamonds);
 	window.draw(*iron);
 
-	//Zapytanie o wyjœcie z gry
+	//Zapytanie o wyjcie z gry
 	this->leaveQuestion(event, window);
 }
 

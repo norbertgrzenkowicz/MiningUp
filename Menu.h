@@ -1,11 +1,12 @@
 #include "Buttons.h"
+#include "Entity.h"
 
-#define MAX_ITEMS 4 //zdefiniowanie maksymalnej wartoœci elementów w menu g³ównym
+#define MAX_ITEMS 4 //zdefiniowanie maksymalnej wartoci elementw w menu gwnym
 
-class Menu
+class Menu : public Entity_iface
 {
 private:
-	int selectedMenuitem; //wybrany element w menu g³ównym
+	int selectedMenuitem; //wybrany element w menu gwnym
 	
 	//elementy tekstu
 	sf::Font font;
@@ -18,18 +19,18 @@ public:
 	Menu(float width, float height);
 	~Menu();
 
-	void moving(sf::RenderWindow& window, sf::Event& event);	//Poruszanie siê w menu g³ównym
-	void drawMenu(sf::RenderWindow& window);					//Rysowanie menu
-	void MoveUp();												//Ruch w górê
-	void MoveDown();											//Ruch w dó³
+	void moving(sf::RenderWindow& window, sf::Event& event);	//Poruszanie si w menu gwnym
+	void draw(sf::RenderWindow& window) final;					//Rysowanie menu
+	void MoveUp();												//Ruch w gr
+	void MoveDown();											//Ruch w d
 
-	int get_SelectedItem() { return selectedMenuitem; };			//Zwraca wybrany element w Menu g³ównym
+	int get_SelectedItem() { return selectedMenuitem; };			//Zwraca wybrany element w Menu gwnym
 
 	//Pomocnicze stanu gry
 	bool menu_start;			//start menu
 	bool game_start;			//start gry
-	bool set_newGame;			//wybór nowej gry
-	bool loadGame;				//wybór za³adowania gry
-	bool choose_difficulty;		//wybór poziomu trudnoœci
-	bool playersChart;			//wybór menu statystyk graczy
+	bool set_newGame;			//wybr nowej gry
+	bool loadGame;				//wybr zaadowania gry
+	bool choose_difficulty;		//wybr poziomu trudnoci
+	bool playersChart;			//wybr menu statystyk graczy
 };
