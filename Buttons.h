@@ -9,7 +9,7 @@ private:
 
 	//Elementy przycisku
 	sf::RectangleShape button;
-	sf::RectangleShape* obramowanie;
+	sf::RectangleShape obramowanie;
 	sf::FloatRect* buttonBounds;
 	sf::Sprite* buttonSprite;
 	

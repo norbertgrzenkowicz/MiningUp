@@ -5,6 +5,8 @@ Buttons::Buttons()
 	Pause = false;
 }
 Buttons::Buttons(int whichButton, sf::RenderWindow& window)
+	:
+	obramowanie()
 {
 	//whichButton - Wykorzystanie przycisku
 	// 0 - Przycisk stop
@@ -19,7 +21,7 @@ Buttons::Buttons(int whichButton, sf::RenderWindow& window)
 	// 9 - Przycisk trudnego poziomu trudnoci
 
 	// button = new sf::RectangleShape;
-	obramowanie = new sf::RectangleShape;
+	// obramowanie = new sf::RectangleShape;
 	buttonBounds = new sf::FloatRect;
 	buttonSprite = new sf::Sprite;
 	tekst = new sf::Text;
@@ -221,7 +223,7 @@ Buttons::Buttons(int whichButton, sf::RenderWindow& window)
 }
 Buttons::~Buttons()
 {
-	delete obramowanie, button, buttonBounds, tekst, tekstBounds, buttonSprite;
+	delete buttonBounds, tekst, tekstBounds, buttonSprite;
 }
 
 bool Buttons::isClicked(sf::Event &event, sf::RenderWindow& window)
@@ -241,12 +243,12 @@ bool Buttons::isClicked(sf::Event &event, sf::RenderWindow& window)
 	&& mousePos.y <= buttonPos.y + buttonBounds->height)				//Myszka wwntrz przycisku
 	{
 		sf::Vector2f obramowaniePos = button.getPosition();
-		obramowanie->setPosition(sf::Vector2f(obramowaniePos.x, obramowaniePos.y));
-		obramowanie->setSize(sf::Vector2f(button.getSize().x, button.getSize().y));
-		obramowanie->setFillColor(sf::Color(0, 0, 0, 128));
+		obramowanie.setPosition(sf::Vector2f(obramowaniePos.x, obramowaniePos.y));
+		obramowanie.setSize(sf::Vector2f(button.getSize().x, button.getSize().y));
+		obramowanie.setFillColor(sf::Color(0, 0, 0, 128));
 
 		tekst->setFillColor(sf::Color(77, 230, 225));
-		window.draw(*obramowanie);									//Rysowanie obramowania na najechanym przycisku
+		window.draw(obramowanie);									//Rysowanie obramowania na najechanym przycisku
 	}
 
 	if (mousePos.x >= buttonPos.x &&

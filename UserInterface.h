@@ -16,10 +16,6 @@ private:
 	unsigned int difficulty;
 
 	//Przyciski
-	Buttons* przyciskStop;
-	Buttons* przyciskBackToGame;
-	Buttons* przyciskRenew;
-	Buttons* przyciskBackToMenu;
 	Buttons* endGameBackToMenu;
 	Buttons* easyButton;
 	Buttons* mediumButton;
@@ -32,7 +28,6 @@ private:
 	sf::Sprite countUI;
 
 	//Kontener przyciskw dla menu pauzy
-	std::vector<Buttons*> ButtonsVector;
 
 	//Tekst
 	sf::Font font;

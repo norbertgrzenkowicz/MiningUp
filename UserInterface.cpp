@@ -30,10 +30,6 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 
 
 	 //Inicjalizacja przyciskw
-	przyciskStop = new Buttons(0, window);
-	przyciskBackToGame = new Buttons(1, window);
-	przyciskRenew = new Buttons(2, window);
-	przyciskBackToMenu = new Buttons(3, window);
 	endGameBackToMenu = new Buttons(4, window);
 	yesButton = new Buttons(5, window);
 	noButton = new Buttons(6, window);
@@ -53,9 +49,12 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 	leave = new sf::Text;
 	gameOver = new sf::Text;
 			 
-	ButtonsVector.push_back(przyciskBackToGame);
-	ButtonsVector.push_back(przyciskRenew);
-	ButtonsVector.push_back(przyciskBackToMenu);
+	// przyciskBackToGame = new Buttons(1, window);
+	// przyciskRenew = new Buttons(2, window);
+	// przyciskBackToMenu = new Buttons(3, window);
+	// ButtonsVector.push_back(przyciskBackToGame);
+	// ButtonsVector.push_back(przyciskRenew);
+	// ButtonsVector.push_back(przyciskBackToMenu);
 
 	
 	//Tekst diamentw oraz elaza wywietlanych w trakcie gry
@@ -129,13 +128,14 @@ UserInterface::UserInterface(sf::RenderWindow& window)
 
 UserInterface::~UserInterface()
 {
-	delete przyciskStop, przyciskBackToGame, przyciskRenew, przyciskBackToMenu, endGameBackToMenu;
+	delete endGameBackToMenu;
 	delete menu;
 	delete diamonds, iron, difficultyText, naglowek, kategorie, playerNumber, helpText, escBack, leave, gameOver;
 }
 
 void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigned int diamondsCounted, unsigned int ironCounted)
 {
+	std::unique_ptr<Buttons> przyciskStop = std::make_unique<Buttons>(0, window);
 
 	//dynamiczny odczyt zebranych diamentw i elaza
 	std::stringstream ssDiamonds;
@@ -158,39 +158,41 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 
 	window.draw(countUI);
 
-	if (przyciskStop->isClicked(event, window) == true)
+	if (przyciskStop->isClicked(event, window))
 	{
 		Pause = true;
 	}
 
-	if (Pause == true && helpMenuBool == false && escape == false)
+	if (Pause && helpMenuBool == false && escape == false)
 	{
 		this->putShadow(window);
+		
+		std::unique_ptr<Buttons> przyciskBackToGame = std::make_unique<Buttons>(1, window);
+		std::unique_ptr<Buttons> przyciskRenew = std::make_unique<Buttons>(2, window);
+		std::unique_ptr<Buttons> przyciskBackToMenu = std::make_unique<Buttons>(3, window);
 
-		for (auto& buttons : ButtonsVector)
-		{
-			buttons->draw(window);
-		}
-		if (przyciskBackToGame->isClicked(event, window) == true)
+		przyciskBackToGame->draw(window);
+		przyciskRenew->draw(window);
+		przyciskBackToMenu->draw(window);
+
+		if (przyciskBackToGame->isClicked(event, window))
 		{
 			Pause = false;
 		}
-
-		else if (przyciskBackToMenu->isClicked(event, window) == true)
+		else if (przyciskRenew->isClicked(event, window))
+		{
+			this->set_renew(true);
+		}
+		else if (przyciskBackToMenu->isClicked(event, window))
 		{
 			menu->menu_start = true;
 			menu->game_start = false;
 			Pause = false;
 		}
-		else if (przyciskRenew->isClicked(event, window) == true)
-		{
-			this->set_renew(true);
-		}
 	}
 
 	this->helpMenu(event, window);
 	this->leaveQuestion(event, window);
-
 
 	przyciskStop->draw(window);
 	window.draw(*diamonds);
