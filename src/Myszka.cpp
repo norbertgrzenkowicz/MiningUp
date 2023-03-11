@@ -65,9 +65,9 @@ void Myszka::positioning(sf::RenderWindow &window, sf::Vector2f gamerPos, sf::Fl
 	text.setString(ss.str());
 
 
-	//Koordynaty myszki poza zasiêgiem postaci
+	//Koordynaty myszki poza zasiï¿½giem postaci
 	
-	//tangensy dla trojk¹ta tworzonego przez œrodek postaci pozycji myszki oraz przeciêcia prostych X oraz Y
+	//tangensy dla trojkï¿½ta tworzonego przez ï¿½rodek postaci pozycji myszki oraz przeciï¿½cia prostych X oraz Y
 	float anglesTangensX;
 	float anglesTangensY;
 	anglesTangensX = (abs(gamerPosMid.y - mousePosView.y)) /(abs(gamerPosMid.x - mousePosView.x));
@@ -129,25 +129,25 @@ void Myszka::positioning(sf::RenderWindow &window, sf::Vector2f gamerPos, sf::Fl
 	}
 
 	//rogi
-	//prawy górny róg
+	//prawy gï¿½rny rï¿½g
 	if (mousePosView.x > gamerPosMid.x + destroyRange && mousePosView.y < gamerPosMid.y - destroyRange)
 	{
 		rangeLimit = sf::Vector2f(gamerPosMid.x + destroyRange, gamerPosMid.y - destroyRange);
 		rangeLimitHalfed = sf::Vector2f(gamerPosMid.x + destroyRange / 2, gamerPosMid.y - destroyRange / 2);
 	}
-	//lewy górny róg
+	//lewy gï¿½rny rï¿½g
 	else if (mousePosView.x < gamerPosMid.x - destroyRange && mousePosView.y < gamerPosMid.y - destroyRange)
 	{
 		rangeLimit = sf::Vector2f(gamerPosMid.x - destroyRange, gamerPosMid.y - destroyRange);
 		rangeLimitHalfed = sf::Vector2f(gamerPosMid.x - destroyRange / 2, gamerPosMid.y - destroyRange / 2);
 	}
-	//lewy dolny róg
+	//lewy dolny rï¿½g
 	else if (mousePosView.x < gamerPosMid.x - destroyRange && mousePosView.y > gamerPosMid.y + destroyRange)
 	{
 		rangeLimit = sf::Vector2f(gamerPosMid.x - destroyRange, gamerPosMid.y + destroyRange);
 		rangeLimitHalfed = sf::Vector2f(gamerPosMid.x - destroyRange / 2, gamerPosMid.y + destroyRange / 2);
 	}
-	//prawy dolny róg
+	//prawy dolny rï¿½g
 	else if (mousePosView.x > gamerPosMid.x + destroyRange && mousePosView.y > gamerPosMid.y + destroyRange)
 	{
 		rangeLimit = sf::Vector2f(gamerPosMid.x + destroyRange, gamerPosMid.y + destroyRange);
@@ -179,7 +179,7 @@ void Myszka::positioning(sf::RenderWindow &window, sf::Vector2f gamerPos, sf::Fl
 		tileSelector->setPosition(rangeLimitGridPos.x * gridSizef, rangeLimitGridPos.y * gridSizef);
 	}
 
-	//Pozycjonowanie pomocniczych punktów okreslajacych zasieg oraz jego po³owê
+	//Pozycjonowanie pomocniczych punktï¿½w okreslajacych zasieg oraz jego poï¿½owï¿½
 	testBoxHalfed->setPosition(rangeLimitHalfed);
 	testBox->setPosition(rangeLimit);
 }
@@ -187,7 +187,7 @@ void Myszka::positioning(sf::RenderWindow &window, sf::Vector2f gamerPos, sf::Fl
 void Myszka::draw(sf::RenderWindow& window) //rysowanie wszystkich elementow
 {
 	window.draw(*tileSelector);
-	//odkomentuj dla dodatkowego interfejsu wskazuj¹cego maksymalny dystans oraz jego po³owê
+	//odkomentuj dla dodatkowego interfejsu wskazujï¿½cego maksymalny dystans oraz jego poï¿½owï¿½
 	//window.draw(testBox);
 	//window.draw(testBoxHalfed);
 }

@@ -1,39 +1,25 @@
 #include "TileMap.h"
 
 
-TileMap::TileMap()
+TileMap::TileMap() :
+	//Inicjalizacja podstawowych cech gry
+	ironMiningTime(2.f),
+	diamondMiningTime (2.5f),
+	stoneMiningTime (1.5f),
+	difficultyMultiplier (1.f),
+	elapsed(0),
+	miningTime(0),
+	gridSizeF(60.f),
+	gatheredDiamonds(0),
+	gatheredIron(0),
+	pastPlayerGridPos(12), //Poczatkowa pozycja gracza
+	isTileDown(false)
 {
-	this->initVariable();  //inicjalizowanie zmiennych
-	this->generateTiles(); //generowanie typow kafli
-	this->map();           //mapowanie typow kafli
-
-}
-
-TileMap::~TileMap()
-{
-	delete myszka;
-}
-
-void TileMap::initVariable()
-{
+	// myszka = std::unique_ptr<Myszka>();
 	typ_kafli = std::vector<std::vector<int>>(mapSizeY, std::vector<int>(mapSizeX));
 	tileMap = std::vector<std::vector<sf::RectangleShape>>(mapSizeY, std::vector<sf::RectangleShape>(mapSizeX));
 
-	//Inicjalizacja podstawowych cech gry
-	ironMiningTime = 2.f;
-	diamondMiningTime = 2.5f;
-	stoneMiningTime = 1.5f;
-	difficultyMultiplier = 1.f;
-
 	srand(time(NULL));
-	elapsed = 0;
-	miningTime = 0;
-	gridSizeF = 60.f;
-	gatheredDiamonds = 0;
-	gatheredIron = 0;
-
-	//Poczatkowa pozycja gracza
-	pastPlayerGridPos = 12;
 	
 	//tekstury blokow
 	diamond.loadFromFile("textures/diamond.jpg");
@@ -41,30 +27,27 @@ void TileMap::initVariable()
 	iron.loadFromFile("textures/iron.jpg");
 	destroying.loadFromFile("textures/destroyingTextures.png");
 
-
 	//animacja niszczenia
 	rectDestroying = sf::IntRect(0, 0, 32, 32);
 	destroyingTiles.setTexture(destroying);
 	destroyingTiles.setTextureRect(rectDestroying);
 	destroyingTiles.setScale (sf::Vector2f(gridSizeF/32, gridSizeF/32));
 
-
-	isTileDown = false;
+	this->generateTiles(); //generowanie typow kafli
+	this->map();           //mapowanie typow kafli
 }
 
 void TileMap::generateTiles()
 {
 	//typ diamentu = 0
-	//typ ¿elaza = 1
+	//typ zelaza = 1
 	//typ kamienia = 2 && 3 && 4 && 5
 	//typ przestrzeni = 6
 
 	for (auto& y : typ_kafli)
 	{
 		for (auto& x : y)
-		{
 			x = rand()%5;
-		}
 	}
 
 	//pusta przestrzen poczatkowa
@@ -86,37 +69,41 @@ void TileMap::map()
 	{
 		for (int x = 0; x < mapSizeX; x++)
 		{
-			if (typ_kafli[y][x] == 0) //dane bloku diamentu
+			switch (typ_kafli[y][x])
 			{
+			case 0: //dane bloku diamentu
 				tileMap[y][x].setTexture(&diamond);
 				tileMap[y][x].setSize(sf::Vector2f(gridSizeF, gridSizeF));
 				tileMap[y][x].setOutlineThickness(1.f);
 				tileMap[y][x].setOutlineColor(sf::Color::Black);
 				tileMap[y][x].setPosition(6 * gridSizeF + gridSizeF * x, gridSizeF * y);
-			}
-			else if (typ_kafli[y][x] == 1) //dane bloku zelaza
-			{
+				break;
+			
+			case 1: //dane bloku zelaza
 				tileMap[y][x].setTexture(&iron);
 				tileMap[y][x].setSize(sf::Vector2f(gridSizeF, gridSizeF));
 				tileMap[y][x].setOutlineThickness(1.f);
 				tileMap[y][x].setOutlineColor(sf::Color::Black);
 				tileMap[y][x].setPosition(6 * gridSizeF + gridSizeF * x, gridSizeF * y);
-
-			}
-			else if (typ_kafli[y][x] == 2 || typ_kafli[y][x] == 3 || typ_kafli[y][x] == 4 || typ_kafli[y][x] == 5) //dane bloku kamienia
-			{
+				break;
+			
+			case 2: case 3: case 4:  case 5:
 				tileMap[y][x].setTexture(&stone);
 				tileMap[y][x].setSize(sf::Vector2f(gridSizeF, gridSizeF));
 				tileMap[y][x].setOutlineThickness(1.f);
 				tileMap[y][x].setOutlineColor(sf::Color::Black);
 				tileMap[y][x].setPosition(6 * gridSizeF + gridSizeF * x, gridSizeF * y);
-			}
-			else if (typ_kafli[y][x] == 6) //dane pustych przestrzenii
-			{
+				break;
+
+			case 6: //dane pustych przestrzenii
 				tileMap[y][x].setSize(sf::Vector2f(0,0));
 				tileMap[y][x].setOutlineThickness(1.f);
 				tileMap[y][x].setOutlineColor(sf::Color::Black);
 				tileMap[y][x].setPosition(6 * gridSizeF + gridSizeF * x, gridSizeF * y);
+				break;
+
+			default:
+				break;
 			}
 		}
 	}
@@ -126,7 +113,7 @@ void TileMap::destroyTile(const float& dt, sf::Event& event)
 {
 	this->ChangeTile(); //jesli jest kafel pomiedzy graczem a wybranym kaflem, zaznaczy kafel pomiedzy
 
-	sf::Vector2u tileSelectorPos = myszka->gettileSelectorGridPos();
+	sf::Vector2u tileSelectorPos = myszka.gettileSelectorGridPos();
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && tileSelectorPos.x >= 6 && tileSelectorPos.x < 36
 		&& typ_kafli[tileSelectorPos.y][tileSelectorPos.x - 6] != 6
@@ -208,16 +195,16 @@ sf::Vector2f TileMap::tilesDown(sf::Vector2f playerPos) //Jesli obecna pozycja z
 
 void TileMap::ChangeTile()
 {
-	sf::Vector2u tileBetweenPos = myszka->getBetweentileGridPos();
+	sf::Vector2u tileBetweenPos = myszka.getBetweentileGridPos();
 	if (tileBetweenPos.x > 5 && tileBetweenPos.x < 24 && typ_kafli[tileBetweenPos.y][tileBetweenPos.x - 6] != 6)
 	{
-		myszka->isTileBetween();
+		myszka.isTileBetween();
 	}
 }
 
 void TileMap::positioning(sf::RenderWindow& window, sf::Vector2f gamerPos, sf::FloatRect gamerBounds)
 {
-	myszka->positioning(window, gamerPos, gamerBounds); //Pozycjonowanie myszki
+	myszka.positioning(window, gamerPos, gamerBounds); //Pozycjonowanie myszki
 }
 
 void TileMap::animateDestroying(const float& dt, int y, int x)
@@ -368,25 +355,19 @@ bool TileMap::get_isTileDown()
 
 sf::Text TileMap::getText()
 {
-	return myszka->getText();
+	return myszka.getText();
 }
 
 void TileMap::drawDestroyAnimation(sf::RenderWindow& window)
 {
 	if (miningTime <= diamondMiningTime / difficultyMultiplier && isItSameBlock == 0) //diament
-	{
 		window.draw(destroyingTiles);
-	}
 
 	if (miningTime <= ironMiningTime / difficultyMultiplier && isItSameBlock == 1) //zelazo
-	{
 		window.draw(destroyingTiles);
-	}
 
 	if (miningTime <= stoneMiningTime / difficultyMultiplier && (isItSameBlock == 2 || isItSameBlock == 3 || isItSameBlock == 4 || isItSameBlock == 5)) //kamien
-	{
 		window.draw(destroyingTiles);
-	}
 }
 
 void TileMap::draw(sf::RenderWindow& window)
@@ -394,9 +375,7 @@ void TileMap::draw(sf::RenderWindow& window)
 	for (int y = 0; y < mapSizeY; y++)
 	{
 		for (int x = 0; x < mapSizeX; x++)
-		{
 			window.draw(tileMap[y][x]);
-		}
 	}
-	myszka->draw(window);
+	myszka.draw(window);
 }

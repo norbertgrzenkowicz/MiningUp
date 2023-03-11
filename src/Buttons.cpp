@@ -105,6 +105,8 @@ Buttons::Buttons(int whichButton, sf::RenderWindow& window)
 			set_pickaxe(sf::IntRect(28, 0, 14, 14), sf::Vector2f(window.getSize().x / 5 / 20, window.getSize().y / 2 / 20), sf::Vector2f(button.getGlobalBounds().left + button.getGlobalBounds().width / 2 - pickaxe.getLocalBounds().width / 2 * pickaxe.getScale().x, button.getGlobalBounds().top + button.getGlobalBounds().height / 2 - pickaxe.getLocalBounds().height / 2 * pickaxe.getScale().y))
 			break;
 
+		default:
+			break;
 	}
 }
 

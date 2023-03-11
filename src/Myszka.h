@@ -13,8 +13,18 @@
 
 class Myszka
 {
+public:
+	Myszka();
+	~Myszka();
+
+	void positioning(sf::RenderWindow& window, sf::Vector2f gamerPos, sf::FloatRect gamerBounds); //Kompletna metoda pozycjonowania myszki oraz kafli wzgledem zasiegu postaci
+	void draw(sf::RenderWindow& window); //rysowanie wszystkich elementow
+	void isTileBetween(); //pozycjonuje tileSelector do kalfa pomiedzy wskazanym kaflem 
+	sf::Vector2u gettileSelectorGridPos(); //zwracanie pozycji tileSelectora
+	sf::Vector2u getBetweentileGridPos(); //zwracanie pozycji kafla pomiedzy wskazanym kaflem
+	sf::Text getText(); //zwracanie tekstu koordynatow myszki
+
 private:
-	
 	//zasieg postaci
 	float destroyRange;
 
@@ -44,14 +54,4 @@ private:
 
 	//Pomocniczy tekst koordynatow myszki
 	sf::Text text;
-public:
-	Myszka();
-	~Myszka();
-
-	void positioning(sf::RenderWindow& window, sf::Vector2f gamerPos, sf::FloatRect gamerBounds); //Kompletna metoda pozycjonowania myszki oraz kafli wzgledem zasiegu postaci
-	void draw(sf::RenderWindow& window); //rysowanie wszystkich elementow
-	void isTileBetween(); //pozycjonuje tileSelector do kalfa pomiedzy wskazanym kaflem 
-	sf::Vector2u gettileSelectorGridPos(); //zwracanie pozycji tileSelectora
-	sf::Vector2u getBetweentileGridPos(); //zwracanie pozycji kafla pomiedzy wskazanym kaflem
-	sf::Text getText(); //zwracanie tekstu koordynatow myszki
 };

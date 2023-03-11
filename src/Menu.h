@@ -15,7 +15,6 @@
 	number.setFillColor(sf::Color::White);	\
 	number.setCharacterSize(size)
 
-
 class Menu : public Entity_iface
 {
 public:

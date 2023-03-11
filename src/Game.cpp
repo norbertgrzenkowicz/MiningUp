@@ -1,11 +1,8 @@
 #include "Game.h"
 
-// #include <chrono>
-// using namespace std::chrono;
-
-
 Game::Game() :
-	window(sf::VideoMode(1920, 1080), "The Dungeon")	//Inicjalizacja okna
+	window(sf::VideoMode(1920, 1080), "The Dungeon"),	//Inicjalizacja okna
+	dt(0) //Czas rzeczywisty
 {
 	window.setFramerateLimit(165);													//Ustawienie limitu klatek gry
 
@@ -19,16 +16,12 @@ Game::Game() :
 	
 	//Inicjalizacja poczatkowego stanu gry, Menu
 	state_ = STATE_MENU;
-
-	//Czas rzeczywisty
-	dt = 0;
 }
 
 void Game::run()
 {
 	while (window.isOpen())
 	{
-		// auto start = high_resolution_clock::now(); 6-8 at menu, 10-18 ingame
 		sf::Event event;
 		dt = dtClock.restart().asSeconds();
 
@@ -207,9 +200,6 @@ void Game::run()
 			window.display();
 			break;
 		}
-		// auto stop = high_resolution_clock::now();
-		// auto duration = duration_cast<milliseconds>(stop - start);
-		// std::cout << duration.count() << std::endl;
 	}
 }
 
