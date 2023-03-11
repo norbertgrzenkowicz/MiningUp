@@ -1,4 +1,15 @@
-The Dungeon
+Game MiningUp!
+
+A 2D game created in C++/SFML environment recently code got updated.
+Game was supposed to be learning canvas for OOP and it did its purpose :)
+
+It implements menu, game saving, movement, animations, object collision, randomly generated tiles of diamonds/iron/stone, moving object. 
+
+Thats the view!
+
+<img width="618" alt="image" src="https://user-images.githubusercontent.com/79313551/224508536-d5794670-4a95-438f-95cc-8feb3d6f5a3f.png">
+
+POLISH FROM NOW ON
 
 ABY WŁĄCZYĆ GRĘ, potrzebne są pliki .dll biblioteki SFML w folderze z kodem i zainstalowanie SFML do IDE.
 
@@ -10,7 +21,6 @@ Najważniejszymi elementami rozgrywki jest kolizja obiektów wraz z graczem, nis
 Cel gry oraz keybindy są dostępne pod klawiszem F1 podczas rozgrywki.
 Do elementów User Interface należą menu główne/wyników/pauzy gry/końca gry/helpmenu oraz możliwość zapisania i wczytania gry(gra wykonuje autosave przy wyłączeniu gry).
 
-Bugi są, nie zamierzam ich poprawiać.
 Elementy graficzne były wykonywane na pixilart.com przy kooperacji z Photoshopem. 
 Niestety brak zdolności artystycznych i czasu przeszkodził w budowie imersyjnego klimatu gry.
 
