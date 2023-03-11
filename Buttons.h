@@ -30,7 +30,6 @@ private:
 
 
 public:
-	bool Pause;
 	Buttons();
 	Buttons(int whichButton, sf::RenderWindow& window); //Konstruktor wszystkich przyciskow, whichButton wskazuje jaki przycisk ma zostal przywolany
 

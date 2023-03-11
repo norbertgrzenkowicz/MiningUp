@@ -2,11 +2,11 @@
 
 Buttons::Buttons()
 {
-	Pause = false;
 }
 Buttons::Buttons(int whichButton, sf::RenderWindow& window)
 	:
 	obramowanie()
+
 {
 	//whichButton - Wykorzystanie przycisku
 	// 0 - Przycisk stop
@@ -27,7 +27,6 @@ Buttons::Buttons(int whichButton, sf::RenderWindow& window)
 	tekst = new sf::Text;
 	// tekstBounds = new sf::FloatRect;
 
-	Pause = false;
 	if (!font.loadFromFile("czcionka.ttf"))
 	{
 		std::cout << "czcionka niezaladowana";
@@ -36,7 +35,6 @@ Buttons::Buttons(int whichButton, sf::RenderWindow& window)
 	if (whichButton == 0)	//Przycisk stop
 	{
 		stopTexture.loadFromFile("textures/buttons/stopbutton.png");
-		Pause = false;
 		button.setPosition(1660,0);
 		button.setSize(sf::Vector2f(50, 50));
 		button.setTexture(&stopTexture);

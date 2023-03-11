@@ -1,141 +1,83 @@
 #include "UserInterface.h"
 
-UserInterface::UserInterface(sf::RenderWindow& window)
+UserInterface::UserInterface(sf::RenderWindow& window) :
+	Pause(false),
+	renew(false),
+	helpMenuBool(false),
+	isSaved(false),
+	isLoaded(false),
+	escape(false),
+	diamonds(),
+	iron(),
+	difficultyText(),
+	playerNumber(),
+	naglowek(),
+	kategorie(),
+	helpText(),
+	escBack(),
+	leave(),
+	gameOver()
 {
 	//Inicjalizacja pomocniczych stanw gry
-	renew = false;
-	Pause = false;
-	helpMenuBool = false;
-	isSaved = false;
-	isLoaded = false;
-	escape = false;
+	Pause = false,
 
 	difficulty = 0;		//Inicjalizacja poziomu trudnoci
 
 	//Inicjalizacja menu gwnego
-	 menu = new Menu(window.getSize().x, window.getSize().y); 
+	 menu = std::make_unique<Menu>(window.getSize().x, window.getSize().y); 
 
 	 if (!font.loadFromFile("czcionka.ttf"))
-	 {
-		 std::cout << "czcionka niezaladowana";
-	 }
+		throw std::invalid_argument("czcionka niezaladowana");
 
-	 //Inicjalizacja sprite'a licznika surowcw
-	 if (!countUIT.loadFromFile("textures/UI.jpg"));
+	 //Inicjalizacja sprite'a licznika surowcow
+	 if (!countUIT.loadFromFile("textures/UI.jpg"))
+		throw std::invalid_argument("Nieznaleziono textures/UI.jpg");
+
 	 countUI.setTexture(countUIT);
 	 countUI.setPosition(1530, 85);
+
+	przyciskStop = std::make_unique<Buttons>(0, window);
+	przyciskBackToGame = std::make_unique<Buttons>(1, window);
+	przyciskRenew = std::make_unique<Buttons>(2, window);
+	przyciskBackToMenu = std::make_unique<Buttons>(3, window);
+	endGameBackToMenu = std::make_unique<Buttons>(4, window);
+	yesButton = std::make_unique<Buttons>(5, window);
+	noButton = std::make_unique<Buttons>(6, window);
+	easyButton = std::make_unique<Buttons>(7, window);
+	mediumButton = std::make_unique<Buttons>(8, window);
+	hardButton = std::make_unique<Buttons>(9, window);
 
 	 //odczyt i zapis struktury graczy
 	 this->loadPlayers();
 
-
-	 //Inicjalizacja przyciskw
-	endGameBackToMenu = new Buttons(4, window);
-	yesButton = new Buttons(5, window);
-	noButton = new Buttons(6, window);
-	easyButton = new Buttons(7, window);
-	mediumButton = new Buttons(8, window);
-	hardButton = new Buttons(9, window);
-
-	 
-	diamonds = new sf::Text;
-	iron = new sf::Text;
-	difficultyText = new sf::Text;
-	naglowek = new sf::Text;
-	kategorie = new sf::Text;
-	playerNumber = new sf::Text;
-	helpText = new sf::Text;
-	escBack = new sf::Text;
-	leave = new sf::Text;
-	gameOver = new sf::Text;
-			 
-	// przyciskBackToGame = new Buttons(1, window);
-	// przyciskRenew = new Buttons(2, window);
-	// przyciskBackToMenu = new Buttons(3, window);
-	// ButtonsVector.push_back(przyciskBackToGame);
-	// ButtonsVector.push_back(przyciskRenew);
-	// ButtonsVector.push_back(przyciskBackToMenu);
-
-	
-	//Tekst diamentw oraz elaza wywietlanych w trakcie gry
-	sf::Color diamondColor(77, 230, 225);
-	diamonds->setFont(font);
-	diamonds->setCharacterSize(40);
-	diamonds->setFillColor(diamondColor);
-
-	sf::Color ironColor(178, 183, 185);
-	iron->setFont(font);
-	iron->setCharacterSize(40);
-	iron->setFillColor(ironColor);
-
-	//Pomocnicza wiadomo o poruszaniu si midzy menu
-	escBack->setFont(font);
-	escBack->setFillColor(sf::Color::White);
-	escBack->setString("Kliknij Escape, aby cofnac!");
-	escBack->setCharacterSize(30);
-	escBack->setPosition(50.f, 50.f);
-
-
-	//tekst koca gry
-	gameOver->setFont(font);
-	gameOver->setFillColor(sf::Color::Red);
-	gameOver->setString("Koniec Gry!");
-	gameOver->setCharacterSize(70);
-	gameOver->setPosition(window.getSize().x / 2 - gameOver->getGlobalBounds().width / 2, window.getSize().y / 3);
-
+	//Pomocnicza wiadomo o poruszaniu sie miedzy menu
+	set_text(escBack, sf::Color::White, "Kliknij Escape, aby cofnac!", 30, 50.f, 50.f);
+	//tekst konca gry
+	set_text(gameOver, sf::Color::Red, "Koniec Gry!", 70, window.getSize().x / 2 - gameOver.getGlobalBounds().width / 2, window.getSize().y / 3);
 	//Elementy menu statystyk graczy
-	naglowek->setFont(font);
-	naglowek->setFillColor(diamondColor);
-	naglowek->setString("Wyniki graczy");
-	naglowek->setCharacterSize(40);
-	naglowek->setPosition(window.getSize().x / 2 - naglowek->getGlobalBounds().width / 2, window.getSize().y / 6);
-
-	kategorie->setFont(font);
-	kategorie->setFillColor(sf::Color::White);
-	kategorie->setString("Gracz                    Diamenty          Zelazo          Poziom trudnosci");
-	kategorie->setCharacterSize(35);
-	kategorie->setPosition(100, window.getSize().y / 6 * 1.5);
-	
-	playerNumber->setFont(font);
-	playerNumber->setFillColor(sf::Color::White);
-	playerNumber->setCharacterSize(30);
-
-	diamonds->setFont(font);
-	diamonds->setFillColor(diamondColor);
-	diamonds->setCharacterSize(30);
-
-	iron->setFont(font);
-	iron->setFillColor(ironColor);
-	iron->setCharacterSize(30);
-	
-	difficultyText->setFont(font);
-	difficultyText->setFillColor(sf::Color::White);
-	difficultyText->setCharacterSize(30);
-
+	set_text(naglowek, diamondColor, "Wyniki graczy", 40, window.getSize().x / 2 - naglowek.getGlobalBounds().width / 2, window.getSize().y / 6);
+	set_text(kategorie, sf::Color::White, "Gracz                    Diamenty          Zelazo          Poziom trudnosci", 35, 100, window.getSize().y / 6 * 1.5);
 	//Tekst w helpMenu
-	helpText->setFont(font);
-	helpText->setCharacterSize(20);
-	helpText->setString("Celem gry jest uzbieranie jak najwiekszej ilosci diamentow oraz zelaza \n podczas kopania do gory w celu unikniecia smierci w kontakcie z wynurzajaca sie lawa. \n Nalezy zwracac uwage, aby droga ucieczki nie zostala zniszczona \n\n\n Sterowanie postacia: \n W oraz Spacja - Skok \n A lub D - odpowiednio ruch lewo badz w prawo \n F4 - zapisanie obecnego stanu gry \n \n Przytrzymujac LPM mozliwa jest destrukcja klockow. Czas zniszczenia klocka jest zalezny od jego typu. \n\n Aby wyjsc z Help Menu nalezy kliknac F2");
-	helpText->setPosition(window.getSize().x / 2 - helpText->getGlobalBounds().width / 2, window.getSize().y / 8);
-
+	set_text(helpText, sf::Color::White,
+	"Celem gry jest uzbieranie jak najwiekszej ilosci diamentow oraz zelaza \n podczas kopania do gory w celu unikniecia smierci w kontakcie z wynurzajaca sie lawa. \n Nalezy zwracac uwage, aby droga ucieczki nie zostala zniszczona \n\n\n Sterowanie postacia: \n W oraz Spacja - Skok \n A lub D - odpowiednio ruch lewo badz w prawo \n F4 - zapisanie obecnego stanu gry \n \n Przytrzymujac LPM mozliwa jest destrukcja klockow. Czas zniszczenia klocka jest zalezny od jego typu. \n\n Aby wyjsc z Help Menu nalezy kliknac F2",
+	20, window.getSize().x / 2 - helpText.getGlobalBounds().width / 2, window.getSize().y / 8);
+	helpText.setPosition(window.getSize().x / 2 - helpText.getGlobalBounds().width / 2, window.getSize().y / 8);
 	//Zapytanie wyjscia z gry
-	leave->setFont(font);
-	leave->setFillColor(sf::Color::White);
-	leave->setString("Czy chcesz wyjsc z gry?");
-	leave->setCharacterSize(40);
-	leave->setPosition(window.getSize().x / 2 - leave->getGlobalBounds().width / 2, window.getSize().y / 3);
+	set_text(leave, sf::Color::White, "Czy chcesz wyjsc z gry?", 40, window.getSize().x / 2 - leave.getGlobalBounds().width / 2, window.getSize().y / 3);
+	
+	//Tekst diamentow oraz zelaza wywietlanych w trakcie gry
+	set_number(playerNumber, sf::Color::White, 30);
+	set_number(diamonds, sf::Color(77, 230, 225), 30);
+	set_number(iron, sf::Color(178, 183, 185), 30);
+	set_number(difficultyText, sf::Color::White, 30);	
 }
 
 UserInterface::~UserInterface()
 {
-	delete endGameBackToMenu;
-	delete menu;
-	delete diamonds, iron, difficultyText, naglowek, kategorie, playerNumber, helpText, escBack, leave, gameOver;
 }
 
 void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigned int diamondsCounted, unsigned int ironCounted)
 {
-	std::unique_ptr<Buttons> przyciskStop = std::make_unique<Buttons>(0, window);
 
 	//dynamiczny odczyt zebranych diamentw i elaza
 	std::stringstream ssDiamonds;
@@ -147,11 +89,11 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 	std::string ironString = ssIron.str();
 
 
-	diamonds->setString(diamondsString);
-	iron->setString(ironString);
+	diamonds.setString(diamondsString);
+	iron.setString(ironString);
 
-	diamonds->setPosition(1660, 100);
-	iron->setPosition(1660, 200);
+	diamonds.setPosition(1660, 100);
+	iron.setPosition(1660, 200);
 
 	//Przycisk stop, pauzuje gr i uruchamia przyciski powrotu do gry, odnowienia gry, powrotu do menu gwnego
 
@@ -166,10 +108,6 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 	if (Pause && helpMenuBool == false && escape == false)
 	{
 		this->putShadow(window);
-		
-		std::unique_ptr<Buttons> przyciskBackToGame = std::make_unique<Buttons>(1, window);
-		std::unique_ptr<Buttons> przyciskRenew = std::make_unique<Buttons>(2, window);
-		std::unique_ptr<Buttons> przyciskBackToMenu = std::make_unique<Buttons>(3, window);
 
 		przyciskBackToGame->draw(window);
 		przyciskRenew->draw(window);
@@ -185,8 +123,8 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 		}
 		else if (przyciskBackToMenu->isClicked(event, window))
 		{
-			menu->menu_start = true;
-			menu->game_start = false;
+			menu->set_menu_start(true);
+			menu->set_game_start(false);
 			Pause = false;
 		}
 	}
@@ -195,8 +133,8 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 	this->leaveQuestion(event, window);
 
 	przyciskStop->draw(window);
-	window.draw(*diamonds);
-	window.draw(*iron);
+	window.draw(diamonds);
+	window.draw(iron);
 
 	//Zapytanie o wyjcie z gry
 	this->leaveQuestion(event, window);
@@ -214,7 +152,7 @@ void UserInterface::helpMenu(sf::Event& event, sf::RenderWindow& window)
 		this->putShadow(window);
 		Pause = true;
 
-		window.draw(*helpText);
+		window.draw(helpText);
 		
 		if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F2)
 		{
@@ -229,7 +167,7 @@ bool UserInterface::endGameMenu(bool isDead,sf::Event& event, sf::RenderWindow &
 	if (isDead == true)
 	{
 		this->putShadow(window);
-		window.draw(*gameOver);
+		window.draw(gameOver);
 		endGameBackToMenu->draw(window);
 		if (endGameBackToMenu->isClicked(event, window) == true)
 		{
@@ -242,6 +180,8 @@ bool UserInterface::endGameMenu(bool isDead,sf::Event& event, sf::RenderWindow &
 
 void UserInterface::playersScore(sf::Event& event, sf::RenderWindow& window)
 {
+	set_number(playerNumber, sf::Color::White, 30);
+
 	int i = 0;
 	int j;
 
@@ -263,38 +203,38 @@ void UserInterface::playersScore(sf::Event& event, sf::RenderWindow& window)
 		diamondsS = ssDiamonds.str();
 		ironS = ssIron.str();
 
-		diamonds->setString(diamondsS);
-		iron->setString(ironS);
+		diamonds.setString(diamondsS);
+		iron.setString(ironS);
 
 		if (gracz.difficulty == 1)
 		{
-			difficultyText->setString("Latwy");
+			difficultyText.setString("Latwy");
 		}
 		else if (gracz.difficulty == 2)
 		{
-			difficultyText->setString("Sredni");
+			difficultyText.setString("Sredni");
 		}
 		else if (gracz.difficulty == 3)
 		{
-			difficultyText->setString("Trudny");
+			difficultyText.setString("Trudny");
 		}
 
-		playerNumber->setString(number);
+		playerNumber.setString(number);
 
-		playerNumber->setPosition(150.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
-		diamonds->setPosition(700.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
-		iron->setPosition(1050.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
-		difficultyText->setPosition(1450.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
+		playerNumber.setPosition(150.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
+		diamonds.setPosition(700.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
+		iron.setPosition(1050.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
+		difficultyText.setPosition(1450.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
 
 		i++;
-		window.draw(*playerNumber);
-		window.draw(*diamonds);
-		window.draw(*iron);
-		window.draw(*difficultyText);
+		window.draw(playerNumber);
+		window.draw(diamonds);
+		window.draw(iron);
+		window.draw(difficultyText);
 	}
-	window.draw(*escBack);
-	window.draw(*naglowek);
-	window.draw(*kategorie);
+	window.draw(escBack);
+	window.draw(naglowek);
+	window.draw(kategorie);
 }
 
 void UserInterface::chooseDifficulty(sf::Event& event, sf::RenderWindow& window)
@@ -302,23 +242,23 @@ void UserInterface::chooseDifficulty(sf::Event& event, sf::RenderWindow& window)
 	if (easyButton->isClicked(event, window))
 	{
 		difficulty = 1;
-		menu->set_newGame = true;
-		menu->game_start = true;
-		menu->choose_difficulty = false;
+		menu->set_newGame(true);
+		menu->set_game_start(true);
+		menu->set_choose_difficulty(false);
 	}
 	else if (mediumButton->isClicked(event, window))
 	{
 		difficulty = 2;
-		menu->set_newGame = true;
-		menu->game_start = true;
-		menu->choose_difficulty = false;
+		menu->set_newGame(true);
+		menu->set_game_start(true);
+		menu->set_choose_difficulty(false);
 	}
 	else if (hardButton->isClicked(event, window))
 	{
 		difficulty = 3;
-		menu->set_newGame = true;
-		menu->game_start = true;
-		menu->choose_difficulty = false;
+		menu->set_newGame(true);
+		menu->set_game_start(true);
+		menu->set_choose_difficulty(false);
 	}
 	easyButton->draw(window);
 	easyButton->drawSprites(window);
@@ -326,7 +266,7 @@ void UserInterface::chooseDifficulty(sf::Event& event, sf::RenderWindow& window)
 	mediumButton->drawSprites(window);
 	hardButton->draw(window);
 	hardButton->drawSprites(window);
-	window.draw(*escBack);
+	window.draw(escBack);
 }
 
 void UserInterface::save(sf::Event event, sf::Vector2f playerPos, std::vector<std::vector<int>> tilemap, sf::Vector2f lavaPos, unsigned int diamondsCount, unsigned int ironCount)
@@ -340,9 +280,8 @@ void UserInterface::save(sf::Event event, sf::Vector2f playerPos, std::vector<st
 		for (auto& tilerow : tilemap)
 		{
 			for (auto& tiles : tilerow)
-			{
 				savefile << tiles<<" ";
-			}
+
 			savefile << "\n";
 		}
 		savefile << lavaPos.x << "\n";
@@ -350,6 +289,7 @@ void UserInterface::save(sf::Event event, sf::Vector2f playerPos, std::vector<st
 		savefile << diamondsCount <<"\n";
 		savefile << ironCount <<"\n";
 		savefile << difficulty;
+
 		savefile.close();
 	}
 	this->savePlayers(diamondsCount, ironCount, difficulty);
@@ -362,7 +302,7 @@ void UserInterface::savePlayers(unsigned int diamondsCount, unsigned int ironCou
 		std::ofstream savePlayersfile;
 		std::string line;
 
-		if (gracze.size() < 5)
+		if (gracze.size() < MAX_SAVES)
 		{
 			savePlayersfile.open("saves/players.txt", std::fstream::app);
 			gracze.push_back(danegracza());
@@ -378,11 +318,11 @@ void UserInterface::savePlayers(unsigned int diamondsCount, unsigned int ironCou
 				savePlayersfile.close();
 			}
 		}
-		else if (gracze.size() >= 5)
+		else if (gracze.size() >= MAX_SAVES)
 		{
 			savePlayersfile.open("saves/players.txt");
 
-			for (int i = 3; i >= 0; i--)
+			for (int i = MAX_SAVES - 2; i >= 0; i--)
 			{
 				int j = i + 1;
 				gracze[j] = gracze[i];
@@ -403,7 +343,7 @@ void UserInterface::savePlayers(unsigned int diamondsCount, unsigned int ironCou
 
 void UserInterface::saveDead(unsigned int diamondsCount, unsigned int ironCount, unsigned int difficulty)
 {
-	if (isSaved != true)
+	if (!isSaved)
 	{
 		this->savePlayers(diamondsCount, ironCount, difficulty);
 		isSaved = true;
@@ -412,8 +352,7 @@ void UserInterface::saveDead(unsigned int diamondsCount, unsigned int ironCount,
 
 void UserInterface::loadGame()
 {
-	
-		std::string lines[29];
+		std::string lines[SAVE_FILE_LENGTH];
 		std::ifstream savefile("saves/save1.txt");
 		std::string line;
 		int typy;
@@ -421,7 +360,6 @@ void UserInterface::loadGame()
 
 		if (savefile.is_open())
 		{
-
 			while (std::getline(savefile, line))
 			{
 				if (line.size() > 0)
@@ -432,13 +370,13 @@ void UserInterface::loadGame()
 		}
 		else
 		{
-			std::cout << "plik nie zostal otwarty";
+			std::cout << "plik zapisu nie zostal otwarty";
 		}
 
 		loadedGamerPos.x = std::stof(lines[0]);
 		loadedGamerPos.y = std::stof(lines[1]);
 
-		for (int i = 2; i <= 23; i++)
+		for (int i = 2; i <= SAVE_FILE_LENGTH - 6; i++)
 		{
 			std::vector<int> typy_kafli;
 			std::stringstream kafleString(lines[i]);
@@ -449,15 +387,15 @@ void UserInterface::loadGame()
 			loadedTypy_kafli.push_back(typy_kafli);
 		}
 
-		loadedLavaPos.x = std::stof(lines[24]);
-		loadedLavaPos.y = std::stof(lines[25]);
-		loadedDiamonds = std::stoi(lines[26]);
-		loadedIron = std::stoi(lines[27]);
-		loadedDifficulty = std::stoi(lines[28]);
+		loadedLavaPos.x = std::stof(lines[SAVE_FILE_LENGTH -5]);
+		loadedLavaPos.y = std::stof(lines[SAVE_FILE_LENGTH - 4]);
+		loadedDiamonds = std::stoi(lines[SAVE_FILE_LENGTH - 3]);
+		loadedIron = std::stoi(lines[SAVE_FILE_LENGTH - 2]);
+		loadedDifficulty = std::stoi(lines[SAVE_FILE_LENGTH - 1]);
 
 
-		menu->game_start = true;
-		menu->menu_start = false;
+		menu->set_game_start(true);
+		menu->set_menu_start(false);
 
 }
 
@@ -501,7 +439,7 @@ void UserInterface::loadPlayers()
 
 void UserInterface::putShadow(sf::RenderWindow& window)
 {
-	sf::RectangleShape menuShadow;
+	static sf::RectangleShape menuShadow;
 	menuShadow.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
 	menuShadow.setFillColor(sf::Color(0, 0, 0, 128));
 	window.draw(menuShadow);
@@ -524,18 +462,18 @@ void UserInterface::leaveQuestion(sf::Event& event, sf::RenderWindow& window)
 			Pause = false;
 		}
 
-		window.draw(*leave);
+		window.draw(leave);
 		noButton->draw(window);
 		yesButton->draw(window);
 	}
 }
 
-void UserInterface::set_escape(bool esc)
+void UserInterface::set_escape(const bool esc)
 {
 	escape = esc;
 }
 
-void UserInterface::set_renew(bool renewG)
+void UserInterface::set_renew(const bool renewG)
 {
 	renew = renewG;
 }
@@ -545,7 +483,7 @@ bool UserInterface::get_renew()
 	return renew;
 }
 
-void UserInterface::set_difficulty(unsigned int difficulty)
+void UserInterface::set_difficulty(const unsigned int difficulty)
 {
 	this->difficulty = difficulty;
 }
@@ -554,6 +492,12 @@ unsigned int UserInterface::get_difficulty()
 {
 	return difficulty;
 }
+
+void UserInterface::set_Pause(bool Pause)
+{
+	this->Pause = Pause;
+}
+
 
 std::vector<std::vector<int>> UserInterface::get_loadedTypy_kafli()
 {
@@ -583,4 +527,9 @@ unsigned int UserInterface::get_loadediron()
 unsigned int UserInterface::get_loadedDifficulty()
 {
 	return loadedDifficulty;
+}
+
+bool UserInterface::get_Pause()
+{
+	return Pause;
 }

@@ -65,8 +65,8 @@ void Game::run()
 				{
 					if (event.key.code == sf::Keyboard::Escape) //cofniecie sie do Menu
 					{
-						UI->menu->choose_difficulty = false;
-						UI->menu->menu_start = true;
+						UI->menu->set_choose_difficulty(false);
+						UI->menu->set_menu_start(true);
 					}
 				}
 			}
@@ -85,8 +85,8 @@ void Game::run()
 				
 				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) //cofniecie sie do Menu
 				{
-					UI->menu->playersChart = false;
-					UI->menu->menu_start = true;
+					UI->menu->set_playersChart(false);
+					UI->menu->set_menu_start(true);
 				}
 			}
 			window.clear();	
@@ -124,7 +124,7 @@ void Game::run()
 			//odpalenie kamery
 			gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched());
 
-			if (UI->menu->set_newGame) //Nowa gra
+			if (UI->menu->get_newGame()) //Nowa gra
 			{
 				//Ustawianie mnoznikow trudnosci oraz tekstury
 				mapa->setDifficultyMultiplier(UI->get_difficulty());
@@ -137,8 +137,8 @@ void Game::run()
 				gracz->setPositionDefault();
 				lawa->setPositionDefault();
 				mapa->setDiamondsDefault();
-				UI->Pause = false;
-				UI->menu->set_newGame = false;
+				UI->set_Pause(false);
+				UI->menu->set_newGame(false);
 			}
 
 			if (UI->get_renew()) //Powtorzenie gry
@@ -157,12 +157,12 @@ void Game::run()
 				gameCamera->followplayer(window, gracz->getPosition(), gracz->getBounds(), gracz->getLavaTouched()); //przywrocenie kamery podazajacej za graczem
 				mapa->setDiamondsDefault();
 				UI->set_renew(false);
-				UI->Pause = false;
+				UI->set_Pause(false);
 			}
 
 			if (!gracz->getLavaTouched()) //Poki gracz jest zywy
 			{
-				if (!UI->Pause) //Poki gra nie jest zapauzowana
+				if (!UI->get_Pause()) //Poki gra nie jest zapauzowana
 				{
 					mapa->positioning(window, gracz->getPosition(), gracz->getBounds());	//Pozycjonowanie myszki
 					gracz->objectCollisionToTileMap(mapa.get());									//Kolizja obiektow
@@ -218,26 +218,26 @@ void Game::run()
 
 void Game::checkGameState()
 {
-	if (UI->menu->menu_start == true)			//stan menu
+	if (UI->menu->get_menu_start())			//stan menu
 	{
 		state_ = STATE_MENU;
 	}
-	if (UI->menu->loadGame == true)				//Wybor wczytania zapisanej gry
+	if (UI->menu->get_loadGame())				//Wybor wczytania zapisanej gry
 	{
 		UI->loadGame();
 		this->loadSavedGame();
-		UI->menu->loadGame = false;
-		UI->menu->game_start = true;
+		UI->menu->set_loadGame(false);
+		UI->menu->set_game_start(true);
 	}
-	if (UI->menu->choose_difficulty == true)	//stan wybierania poziomu trudnosci
+	if (UI->menu->get_choose_difficulty())	//stan wybierania poziomu trudnosci
 	{
 		state_ = STATE_CHOOSINGDIFFICULTY;
 	}
-	if (UI->menu->playersChart == true)			//stan statystyk graczy
+	if (UI->menu->get_playersChart())			//stan statystyk graczy
 	{
 		state_ = STATE_PLAYERSCHART;
 	}
-	if (UI->menu->game_start == true)			//stan gry
+	if (UI->menu->get_game_start())			//stan gry
 	{
 		state_ = STATE_GAME;
 	}
@@ -261,8 +261,8 @@ void Game::loadMenuAfterDeath(bool back) //ustawienie zmiennych potrzebnych do z
 {
 	if (back)
 	{
-		UI->menu->menu_start = true;
-		UI->menu->choose_difficulty = false;
-		UI->menu->game_start = false;
+		UI->menu->set_menu_start(true);
+		UI->menu->set_choose_difficulty(false);
+		UI->menu->set_game_start(false);
 	}
 }

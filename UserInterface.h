@@ -1,27 +1,24 @@
 #include "Menu.h"
 
+#define MAX_SAVES 5
+#define SAVE_FILE_LENGTH 29
 
 class UserInterface
-	: public Buttons
 {
 private:
 
 	//Zmienne pomocnicze stanw gry
+	bool Pause;
 	bool renew;
 	bool helpMenuBool;
 	bool isSaved;
 	bool isLoaded;
 	bool escape;
 
+	std::string helptext;
 	unsigned int difficulty;
 
 	//Przyciski
-	Buttons* endGameBackToMenu;
-	Buttons* easyButton;
-	Buttons* mediumButton;
-	Buttons* hardButton;
-	Buttons* noButton;
-	Buttons* yesButton;
 
 	//Tekstura licznikw surowcw
 	sf::Texture countUIT;
@@ -32,16 +29,27 @@ private:
 	//Tekst
 	sf::Font font;
 
-	sf::Text* diamonds;
-	sf::Text* iron;
-	sf::Text* difficultyText;
-	sf::Text* naglowek;
-	sf::Text* kategorie;
-	sf::Text* playerNumber;
-	sf::Text* helpText;
-	sf::Text* escBack;
-	sf::Text* leave;
-	sf::Text* gameOver;
+	sf::Text diamonds;
+	sf::Text iron;
+	sf::Text playerNumber;
+	sf::Text difficultyText;
+	sf::Text naglowek;
+	sf::Text kategorie;
+	sf::Text helpText;
+	sf::Text escBack;
+	sf::Text leave;
+	sf::Text gameOver;
+
+	std::unique_ptr<Buttons> przyciskStop;
+	std::unique_ptr<Buttons> przyciskBackToGame;
+	std::unique_ptr<Buttons> przyciskRenew;
+	std::unique_ptr<Buttons> przyciskBackToMenu;
+	std::unique_ptr<Buttons> endGameBackToMenu;
+	std::unique_ptr<Buttons> yesButton;
+	std::unique_ptr<Buttons> noButton;
+	std::unique_ptr<Buttons> easyButton;
+	std::unique_ptr<Buttons> mediumButton;
+	std::unique_ptr<Buttons> hardButton;
 
 	//Zmienne zaadowane
 	sf::Vector2f loadedGamerPos;
@@ -61,7 +69,7 @@ private:
 	std::vector<danegracza> gracze;
 public:
 
-	Menu* menu;
+	std::unique_ptr<Menu> menu;
 	UserInterface(sf::RenderWindow& window);
 	~UserInterface();
 
@@ -81,11 +89,12 @@ public:
 	void putShadow(sf::RenderWindow& window);																				//Zaciemienie gry na czas pauzy/helpMenu
 	void leaveQuestion(sf::Event& event, sf::RenderWindow& window);															//Zapytanie czy chcesz wyjsc z gry
 
-	void set_escape(bool esc);																								//Ustawianie booleanu zapytania wyjcia z gry
-	void set_renew(bool renewG);																							//Ustawianie booleanu odnowienia gry
+	void set_escape(const bool esc);																								//Ustawianie booleanu zapytania wyjcia z gry
+	void set_renew(const bool renewG);																							//Ustawianie booleanu odnowienia gry
 	bool get_renew();																										//Odczyt booleanu odnowienia gry
-	void set_difficulty(unsigned int difficulty);																			//Ustawianie poziomu trudnoci gry
+	void set_difficulty(const unsigned int difficulty);																			//Ustawianie poziomu trudnoci gry
 	unsigned int get_difficulty();																							//Odczyt poziomu trudnoci gry
+	void set_Pause(bool Pause);
 
 	std::vector<std::vector<int>> get_loadedTypy_kafli();																	//Odczyt typy_kafli z pliku
 	sf::Vector2f get_loadedGamerPos();																						//Odczyt pozycji gracza z pliku
@@ -93,4 +102,5 @@ public:
 	unsigned int get_loadeddiamonds();																						//Odczyt zebranych diamentw z pliku
 	unsigned int get_loadediron();																							//Odczyt zebranego elaza z pliku
 	unsigned int get_loadedDifficulty();																					//Odczyt poziomu trudnoci z pliku
+	bool get_Pause();
 };

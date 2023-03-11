@@ -6,14 +6,23 @@ Menu::Menu() :
  loadGame(false),
 	game_start(false),
 	menu_start(true),
-	set_newGame(false),
+	newGame(false),
 	choose_difficulty(false),
 	playersChart(false),
 	selectedMenuitem(0)
 {
 }
 
-Menu::Menu(float width, float height)
+Menu::Menu(float width, float height) :
+	//Inicjalizacja pomocniczych stanow gry
+	tytul(),
+	loadGame(false),
+	game_start(false),
+	menu_start(true),
+	newGame(false),
+	choose_difficulty(false),
+	playersChart(false),
+	selectedMenuitem(0)
 {
 
 	if (!font.loadFromFile("czcionka.ttf"))
@@ -30,23 +39,8 @@ Menu::Menu(float width, float height)
 		"Quit"
 	};
 
-	//Inicjalizacja pomocniczych stanow gry
-	loadGame = false;
-	game_start = false;
-	menu_start = true;
-	set_newGame = false;
-	choose_difficulty = false;
-	playersChart = false;
-	selectedMenuitem = 0;
+	set_text(tytul, sf::Color(77, 230, 225), "MiningUp!", 60, width / 2 - tytul.getGlobalBounds().width/2, 50);
 
-	//Inicjalizacja tytulu
-	tytul = new sf::Text;
-
-	tytul->setFont(font);
-	tytul->setString("The Dungeon");
-	tytul->setFillColor(sf::Color(77, 230, 225));
-	tytul->setCharacterSize(60);
-	tytul->setPosition(width / 2 - tytul->getGlobalBounds().width/2, 50);
 
 	//Inicjalizacja polozenia elementow oraz ich wlasciwosci
 	for (int i = 0; i < MAX_ITEMS; i++)
@@ -57,13 +51,12 @@ Menu::Menu(float width, float height)
 		else
 			menu[i].setFillColor(sf::Color::White);
 		menu[i].setString(h[i]);
-		menu[i].setPosition(sf::Vector2f(width / 2 - menu[i].getGlobalBounds().width/2, 100 + tytul->getGlobalBounds().height + height / (MAX_ITEMS + 2) * (i + 1)));
+		menu[i].setPosition(sf::Vector2f(width / 2 - menu[i].getGlobalBounds().width/2, 100 + tytul.getGlobalBounds().height + height / (MAX_ITEMS + 2) * (i + 1)));
 	}
 }
 
 Menu::~Menu()
 {
-	delete tytul;
 }
 
 void Menu::draw(sf::RenderWindow& window)
@@ -72,7 +65,7 @@ void Menu::draw(sf::RenderWindow& window)
 	{
 		window.draw(menu[i]);
 	}
-	window.draw(*tytul);
+	window.draw(tytul);
 }
 
 void Menu::MoveUp()
@@ -128,4 +121,65 @@ void Menu::moving(sf::RenderWindow& window, sf::Event& event)
 	if (event.type == sf::Event::Closed)
 
 		window.close();
+}
+
+void Menu::set_menu_start(bool menu_start)
+{
+	this->menu_start = menu_start;
+}
+
+bool Menu::get_menu_start()
+{
+	return menu_start;
+}
+
+void Menu::set_newGame(bool newGame)
+{
+	this->newGame = newGame;
+}
+
+bool Menu::get_newGame()
+{
+	return newGame;
+}
+
+void Menu::set_game_start(bool game_start)
+{
+	this->game_start = game_start;
+}
+
+bool Menu::get_game_start()
+{
+	return game_start;
+}
+
+
+void Menu::set_loadGame(bool loadGame)
+{
+	this->loadGame = loadGame;
+}
+
+bool Menu::get_loadGame()
+{
+	return loadGame;
+}
+
+void Menu::set_choose_difficulty(bool choose_difficulty)
+{
+	this->choose_difficulty = choose_difficulty;
+}
+
+bool Menu::get_choose_difficulty()
+{
+	return choose_difficulty;
+}
+
+void Menu::set_playersChart(bool playersChart)
+{
+	this->playersChart = playersChart;
+}
+
+bool Menu::get_playersChart()
+{
+	return playersChart;
 }
