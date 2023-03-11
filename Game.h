@@ -3,6 +3,14 @@
 
 class Game
 {
+public:
+	Game();
+
+	void run();							//Metoda zawiera gwn ptle gry wraz z jej wszystkimi elementami
+	void checkGameState();				//Sprawdza oraz zmienia stany gry
+	void loadSavedGame();				//aduje gr
+	void loadMenuAfterDeath();	//aduje menu po przegraniu gry
+
 private:
 	sf::RenderWindow window;
 	sf::Clock dtClock;
@@ -24,14 +32,4 @@ private:
 	std::unique_ptr<TileMap> mapa;		//Otoczenie gracza
 	std::unique_ptr<Lava> lawa;			
 	std::unique_ptr<Background> tlo;	//Wczytywanie ta
-
-	
-public:
-	Game();
-	~Game();
-
-	void run();							//Metoda zawiera gwn ptle gry wraz z jej wszystkimi elementami
-	void checkGameState();				//Sprawdza oraz zmienia stany gry
-	void loadSavedGame();				//aduje gr
-	void loadMenuAfterDeath(bool back);	//aduje menu po przegraniu gry
 };

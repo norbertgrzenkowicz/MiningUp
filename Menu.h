@@ -13,12 +13,46 @@
 #define set_number(number, color, size) \
 	number.setFont(font);					\
 	number.setFillColor(sf::Color::White);	\
-	number.setCharacterSize(size);
+	number.setCharacterSize(size)
 
 
 class Menu : public Entity_iface
 {
+public:
+	Menu();
+	Menu(float width, float height);
+	~Menu();
+
+	void moving(sf::RenderWindow& window, const sf::Event& event);	//Poruszanie si w menu gwnym
+	void draw(sf::RenderWindow& window) final;					//Rysowanie menu
+	void MoveUp();												//Ruch w gr
+	void MoveDown();											//Ruch w d
+
+	int get_SelectedItem() { return selectedMenuitem; };			//Zwraca wybrany element w Menu gwnym
+
+	void set_menu_start(const bool& menu_start);
+	void set_game_start(const bool& game_start);
+	void set_newGame(const bool& newGame);
+	void set_loadGame(const bool& loadGame);
+	void set_choose_difficulty(const bool& choose_difficulty);
+	void set_playersChart(const bool& playersChart);
+
+	bool get_menu_start();
+	bool get_game_start();
+	bool get_newGame();
+	bool get_loadGame();
+	bool get_choose_difficulty();
+	bool get_playersChart();
+
 private:
+	std::vector<std::string> menuText =
+	{
+		"New game",
+		"Load game",
+		"Players",
+		"Quit"
+	};
+
 	int selectedMenuitem; //wybrany element w menu gwnym
 	
 	//elementy tekstu
@@ -35,29 +69,4 @@ private:
 	bool choose_difficulty;		//wybr poziomu trudnoci
 	bool playersChart;			//wybr menu statystyk graczy
 
-public:
-	Menu();
-	Menu(float width, float height);
-	~Menu();
-
-	void moving(sf::RenderWindow& window, sf::Event& event);	//Poruszanie si w menu gwnym
-	void draw(sf::RenderWindow& window) final;					//Rysowanie menu
-	void MoveUp();												//Ruch w gr
-	void MoveDown();											//Ruch w d
-
-	int get_SelectedItem() { return selectedMenuitem; };			//Zwraca wybrany element w Menu gwnym
-
-	void set_menu_start(bool menu_start);
-	void set_game_start(bool game_start);
-	void set_newGame(bool newGame);
-	void set_loadGame(bool loadGame);
-	void set_choose_difficulty(bool choose_difficulty);
-	void set_playersChart(bool playersChart);
-
-	bool get_menu_start();
-	bool get_game_start();
-	bool get_newGame();
-	bool get_loadGame();
-	bool get_choose_difficulty();
-	bool get_playersChart();
 };

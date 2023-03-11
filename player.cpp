@@ -1,56 +1,39 @@
 #include "player.h"
 
+player::player() :
 
-float gravity = 0.1f;
-
-player::player()
-{
-	this->initVariables();
-	this->initTexture();
-}
-
-player::~player()
-{
-	delete gracz;
-}
-
-void player::initVariables()
-{
 	//Inicjalizacja cech ruchu
-	gravity = 0.1f;
-	movementspeed = 200.f;
-	velocity.x = 0.f;
-	velocity.y = 0.f;
-	dtime = 0;
-	elapsedJump = 0;
+	velocity(0.f, 0.f),
+	dtime(0),
+	elapsedJump(0),
 	//Zmienne stanu ycia oraz skakania
-	lavaTouched = false;
-	isJumping = false;
-}
-
-void player::initTexture()
-{
-	if (!tekstura.loadFromFile("textures/charactersprites.png"))
-		std::cout<<"Nie zaladowano tekstury";
-
-	if (!pickaxeTexture.loadFromFile("textures/pickaxes.png"))
-		std::cout<<"Nie zaladowano tekstury";
+	lavaTouched(false),
+	isJumping(false),
 
 	//Wymiary Sprite'ow
-	rectGraczSprite = sf::IntRect(0, 0, 30, 40);
-	rectArmSprite = sf::IntRect(20, 40, 15, 20);
-	rectDiamondPickaxeSprite = sf::IntRect(0, 0, 14, 14);
-	rectIronPickaxeSprite = sf::IntRect(14, 0, 14, 14);
-	rectStonePickaxeSprite = sf::IntRect(28, 0, 14, 14);
+	rectGraczSprite(0, 0, 30, 40),
+	rectArmSprite(20, 40, 15, 20),
+	rectDiamondPickaxeSprite(0, 0, 14, 14),
+	rectIronPickaxeSprite(14, 0, 14, 14),
+	rectStonePickaxeSprite(28, 0, 14, 14)
+{
+	tekstura = std::make_unique<sf::Texture>();
+	pickaxeTexture = std::make_unique<sf::Texture>();
+
+	if (!tekstura->loadFromFile("textures/charactersprites.png"))
+		std::cout<<"Nie zaladowano tekstury";
+
+	if (!pickaxeTexture->loadFromFile("textures/pickaxes.png"))
+		std::cout<<"Nie zaladowano tekstury";
 
 	//Inicjalizacja tekstur
-	gracz = new sf::Sprite;
-	pickaxeArm = new sf::Sprite;
-	pickaxe = new sf::Sprite;
+	gracz = std::make_unique<sf::Sprite>();
+	pickaxeArm = std::make_unique<sf::Sprite>();
+	pickaxe = std::make_unique<sf::Sprite>();
 
-	gracz->setTexture(tekstura);
-	pickaxeArm->setTexture(tekstura);
-	pickaxe->setTexture(pickaxeTexture);
+	gracz->setTexture(*tekstura);
+	pickaxeArm->setTexture(*tekstura);
+	pickaxe->setTexture(*pickaxeTexture);
 
 	gracz->setTextureRect(rectGraczSprite);
 	pickaxeArm->setTextureRect(rectArmSprite);
@@ -87,8 +70,6 @@ void player::initTexture()
 
 void player::move(const float& dt, sf::Event& event)
 {
-	sf::Vector2f gamerPosition = gracz->getPosition();
-
 	velocity.x = 0;
 
 	//Prawy ruch
@@ -102,7 +83,7 @@ void player::move(const float& dt, sf::Event& event)
 		velocity.x += -movementspeed * dt;
 	}
 
-	if (isJumping == false) //Skok
+	if (!isJumping) //Skok
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		{
@@ -229,9 +210,8 @@ void player::physics()
 		velocity.y += gravity;
 	}
 	//Przypieszenie grawitacyjne postaci
-	velocity.x += acceleration.x; 
-	velocity.y += acceleration.y;
-
+	// velocity.x += acceleration.x; 
+	// velocity.y += acceleration.y;
 }
 
 void player::didLavaTouched(sf::Vector2f lavaPos)
@@ -245,6 +225,12 @@ void player::didLavaTouched(sf::Vector2f lavaPos)
 bool player::getLavaTouched()
 {
 	return lavaTouched;
+}
+
+void player::undoDeath(bool death)
+{
+	lavaTouched = death;
+	gracz->setRotation(0.f);
 }
 
 void player::moveArm()
@@ -297,41 +283,29 @@ void player::walkingAnimation(const float &dt)
 {
 	dtime += dt;
 
-	if (velocity.y == 0 && velocity.x > 0) //animacja w prawo
+	if (!velocity.y && velocity.x > 0) //animacja w prawo
 	{
 		if (dtime > 0.1f)
 		{
-			if (rectGraczSprite.left == 60)
-			{
-				rectGraczSprite.left = 0;
-			}
-			else
-			{
-				rectGraczSprite.left += 30;
-			}
+			rectGraczSprite.left = rectGraczSprite.left == 60 ? 0 : rectGraczSprite.left + 30;
+
 			gracz->setTextureRect(rectGraczSprite);
 			dtime = 0;
 		}
 	}
 
-	else if (velocity.y == 0 && velocity.x < 0) //animacja w lewo
+	else if (!velocity.y && velocity.x < 0) //animacja w lewo
 	{
 		if (dtime > 0.1f)
 		{
-			if (rectGraczSprite.left == 60)
-			{
-				rectGraczSprite.left = 0;
-			}
-			else
-			{
-				rectGraczSprite.left += 30;
-			}
+			rectGraczSprite.left = rectGraczSprite.left == 60 ? 0 : rectGraczSprite.left + 30;
+
 			gracz->setTextureRect(rectGraczSprite);
 			gracz->setScale(-1.5f, 1.5f);
 			dtime = 0;
 		}
 	}
-	else if (velocity.x == 0) //Pozycja bez ruchu
+	else if (!velocity.x) //Pozycja bez ruchu
 	{
 		rectGraczSprite.left = 0;
 		gracz->setTextureRect(rectGraczSprite);
@@ -347,9 +321,8 @@ bool player::death(const float& dt, bool death)
 		return true;
 	}
 	else if (gracz->getGlobalBounds().top >= 22 * gridsize)
-	{
 		return true;
-	}
+
 	else
 		return false;
 }
@@ -390,10 +363,6 @@ sf::FloatRect player::getBounds()
 	return gracz->getGlobalBounds();
 }
 
-int player::getGridPosY()
-{
-	return static_cast<int>(gracz->getPosition().y);
-}
 
 void player::draw(sf::RenderWindow& window)
 {

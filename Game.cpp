@@ -12,20 +12,16 @@ Game::Game() :
 	//Inicjalizacja klas
 	UI = std::make_unique<UserInterface>(window);
 	gracz = std::make_unique<player>();
-	lawa = std::make_unique<Lava>();
+	lawa = std::make_unique<Lava>(window.getSize());
 	mapa = std::make_unique<TileMap>();
 	gameCamera = std::make_unique<Camera>(window.getSize());
-	tlo = std::make_unique<Background>(window.getSize());
+	tlo = std::make_unique<Background>(window.getSize(), "textures/textureBackground.jpg");
 	
 	//Inicjalizacja poczatkowego stanu gry, Menu
 	state_ = STATE_MENU;
 
 	//Czas rzeczywisty
 	dt = 0;
-}
-
-Game::~Game()
-{
 }
 
 void Game::run()
@@ -103,8 +99,8 @@ void Game::run()
 			{
 				if (event.type == sf::Event::Closed)
 				{
-					if (gracz->getLavaTouched() != true) //Przy wylaczeniu okna nastepuje zapis gry
-						UI->save(event, gracz->getPosition(), mapa->get_typ_kafli(), lawa->getLavaSurfacePos(), mapa->getGatheredDiamonds(), mapa->getGatheredIron());
+					if (!gracz->getLavaTouched()) //Przy wylaczeniu okna nastepuje zapis gry
+						UI->save(gracz->getPosition(), mapa->get_typ_kafli(), lawa->getLavaSurfacePos(), mapa->getGatheredDiamonds(), mapa->getGatheredIron());
 					window.close();
 				}
 				if (event.type == sf::Event::KeyPressed) //Zapytanie czy wyjsc z gry
@@ -182,7 +178,7 @@ void Game::run()
 					if (event.type == sf::Event::KeyPressed)
 					{
 						if (event.key.code == sf::Keyboard::F4) // zapis gry podczas klikniecia przycisku F4
-							UI->save(event, gracz->getPosition(), mapa->get_typ_kafli(), lawa->getLavaSurfacePos(), mapa->getGatheredDiamonds(), mapa->getGatheredIron());
+							UI->save(gracz->getPosition(), mapa->get_typ_kafli(), lawa->getLavaSurfacePos(), mapa->getGatheredDiamonds(), mapa->getGatheredIron());
 					}
 				}
 			}
@@ -205,7 +201,8 @@ void Game::run()
 			if (gracz->getLavaTouched()) //smierc = intersekcja gracza z lawa
 			{
 				UI->saveDead(mapa->getGatheredDiamonds(), mapa->getGatheredIron(), UI->get_difficulty()); //zapis statystyk
-				this->loadMenuAfterDeath(UI->endGameMenu(gracz->death(dt, gracz->getLavaTouched()), event, window)); //Menu posmiertne
+				if (UI->endGameMenu(gracz->death(dt, gracz->getLavaTouched()), event, window))
+					this->loadMenuAfterDeath(); //Menu posmiertne
 			}
 			window.display();
 			break;
@@ -219,9 +216,8 @@ void Game::run()
 void Game::checkGameState()
 {
 	if (UI->menu->get_menu_start())			//stan menu
-	{
 		state_ = STATE_MENU;
-	}
+
 	if (UI->menu->get_loadGame())				//Wybor wczytania zapisanej gry
 	{
 		UI->loadGame();
@@ -230,17 +226,13 @@ void Game::checkGameState()
 		UI->menu->set_game_start(true);
 	}
 	if (UI->menu->get_choose_difficulty())	//stan wybierania poziomu trudnosci
-	{
 		state_ = STATE_CHOOSINGDIFFICULTY;
-	}
+
 	if (UI->menu->get_playersChart())			//stan statystyk graczy
-	{
 		state_ = STATE_PLAYERSCHART;
-	}
+
 	if (UI->menu->get_game_start())			//stan gry
-	{
 		state_ = STATE_GAME;
-	}
 }
 
 void Game::loadSavedGame() //wczytywanie gry
@@ -257,12 +249,11 @@ void Game::loadSavedGame() //wczytywanie gry
 	mapa->setIron(UI->get_loadediron());
 }
 
-void Game::loadMenuAfterDeath(bool back) //ustawienie zmiennych potrzebnych do zaladowania menu posmiertnego
+void Game::loadMenuAfterDeath() //ustawienie zmiennych potrzebnych do zaladowania menu posmiertnego
 {
-	if (back)
-	{
 		UI->menu->set_menu_start(true);
 		UI->menu->set_choose_difficulty(false);
 		UI->menu->set_game_start(false);
-	}
+		UI->menu->set_newGame(true);
+		gracz->undoDeath(false);
 }

@@ -30,17 +30,7 @@ Menu::Menu(float width, float height) :
 		std::cout<< "czcionka niezaladowana";
 	}
 
-	//Zawartosc elementow menu glownego
-	std::vector<std::string> h =
-	{
-		"New game",
-		"Load game",
-		"Players",
-		"Quit"
-	};
-
 	set_text(tytul, sf::Color(77, 230, 225), "MiningUp!", 60, width / 2 - tytul.getGlobalBounds().width/2, 50);
-
 
 	//Inicjalizacja polozenia elementow oraz ich wlasciwosci
 	for (int i = 0; i < MAX_ITEMS; i++)
@@ -50,7 +40,7 @@ Menu::Menu(float width, float height) :
 			menu[i].setFillColor(sf::Color(77, 230, 225));
 		else
 			menu[i].setFillColor(sf::Color::White);
-		menu[i].setString(h[i]);
+		menu[i].setString(menuText[i]);
 		menu[i].setPosition(sf::Vector2f(width / 2 - menu[i].getGlobalBounds().width/2, 100 + tytul.getGlobalBounds().height + height / (MAX_ITEMS + 2) * (i + 1)));
 	}
 }
@@ -88,7 +78,7 @@ void Menu::MoveDown()
 	}
 }
 
-void Menu::moving(sf::RenderWindow& window, sf::Event& event)
+void Menu::moving(sf::RenderWindow& window, const sf::Event& event)
 {
 	if (event.type == sf::Event::KeyPressed)
 	{
@@ -123,7 +113,7 @@ void Menu::moving(sf::RenderWindow& window, sf::Event& event)
 		window.close();
 }
 
-void Menu::set_menu_start(bool menu_start)
+void Menu::set_menu_start(const bool& menu_start)
 {
 	this->menu_start = menu_start;
 }
@@ -133,7 +123,7 @@ bool Menu::get_menu_start()
 	return menu_start;
 }
 
-void Menu::set_newGame(bool newGame)
+void Menu::set_newGame(const bool& newGame)
 {
 	this->newGame = newGame;
 }
@@ -143,7 +133,7 @@ bool Menu::get_newGame()
 	return newGame;
 }
 
-void Menu::set_game_start(bool game_start)
+void Menu::set_game_start(const bool& game_start)
 {
 	this->game_start = game_start;
 }
@@ -154,7 +144,7 @@ bool Menu::get_game_start()
 }
 
 
-void Menu::set_loadGame(bool loadGame)
+void Menu::set_loadGame(const bool& loadGame)
 {
 	this->loadGame = loadGame;
 }
@@ -164,7 +154,7 @@ bool Menu::get_loadGame()
 	return loadGame;
 }
 
-void Menu::set_choose_difficulty(bool choose_difficulty)
+void Menu::set_choose_difficulty(const bool& choose_difficulty)
 {
 	this->choose_difficulty = choose_difficulty;
 }
@@ -174,7 +164,7 @@ bool Menu::get_choose_difficulty()
 	return choose_difficulty;
 }
 
-void Menu::set_playersChart(bool playersChart)
+void Menu::set_playersChart(const bool& playersChart)
 {
 	this->playersChart = playersChart;
 }

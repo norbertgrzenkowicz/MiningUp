@@ -1,14 +1,18 @@
 #pragma once
 #include "Camera.h"
 #include "Positionable.h"
+
+#define HARDDIFF 1.3f
+#define EASYANDMIDDIFF 1.f
+
 class Lava : public Positionable
 {
 private:
 	//Cechy graficzne lawy
-	sf::Texture lavaT;
 	//sf::Sprite* lavaSurface;
-	sf::RectangleShape* lavaSurface;
-	sf::RectangleShape* restOfLava;
+	std::unique_ptr<sf::Texture> lavaT;
+	sf::RectangleShape lavaSurface;
+	sf::RectangleShape restOfLava;
 	sf::Color lavish;
 
 	//cechy ruchu oraz rozmiaru
@@ -19,8 +23,7 @@ private:
 	unsigned int difficultyMultiplier;
 	
 public:
-	Lava();
-	~Lava();
+	Lava(const sf::Vector2u& window);
 
 	void moveUp(const float &dt);								//Cykliczny ruch lawy do gry wzgldem prdkoci i czasu
 	void draw(sf::RenderWindow& window) final;						//Rysowanie lawy

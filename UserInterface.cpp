@@ -14,16 +14,11 @@ UserInterface::UserInterface(sf::RenderWindow& window) :
 	naglowek(),
 	kategorie(),
 	helpText(),
+	difficulty(0), //Inicjalizacja poziomu trudnoci
 	escBack(),
 	leave(),
 	gameOver()
 {
-	//Inicjalizacja pomocniczych stanw gry
-	Pause = false,
-
-	difficulty = 0;		//Inicjalizacja poziomu trudnoci
-
-	//Inicjalizacja menu gwnego
 	 menu = std::make_unique<Menu>(window.getSize().x, window.getSize().y); 
 
 	 if (!font.loadFromFile("czcionka.ttf"))
@@ -34,7 +29,7 @@ UserInterface::UserInterface(sf::RenderWindow& window) :
 		throw std::invalid_argument("Nieznaleziono textures/UI.jpg");
 
 	 countUI.setTexture(countUIT);
-	 countUI.setPosition(1530, 85);
+	 countUI.setPosition(FULL_HD_WIDTH - 390, 85);
 
 	przyciskStop = std::make_unique<Buttons>(0, window);
 	przyciskBackToGame = std::make_unique<Buttons>(1, window);
@@ -72,13 +67,8 @@ UserInterface::UserInterface(sf::RenderWindow& window) :
 	set_number(difficultyText, sf::Color::White, 30);	
 }
 
-UserInterface::~UserInterface()
-{
-}
-
 void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigned int diamondsCounted, unsigned int ironCounted)
 {
-
 	//dynamiczny odczyt zebranych diamentw i elaza
 	std::stringstream ssDiamonds;
 	std::stringstream ssIron;
@@ -88,22 +78,16 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 	std::string diamondsString = ssDiamonds.str();
 	std::string ironString = ssIron.str();
 
-
 	diamonds.setString(diamondsString);
 	iron.setString(ironString);
 
-	diamonds.setPosition(1660, 100);
-	iron.setPosition(1660, 200);
-
-	//Przycisk stop, pauzuje gr i uruchamia przyciski powrotu do gry, odnowienia gry, powrotu do menu gwnego
-
+	diamonds.setPosition(FULL_HD_WIDTH - 260, 100);
+	iron.setPosition(FULL_HD_WIDTH - 260, 200);
 
 	window.draw(countUI);
 
 	if (przyciskStop->isClicked(event, window))
-	{
 		Pause = true;
-	}
 
 	if (Pause && helpMenuBool == false && escape == false)
 	{
@@ -114,13 +98,11 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 		przyciskBackToMenu->draw(window);
 
 		if (przyciskBackToGame->isClicked(event, window))
-		{
 			Pause = false;
-		}
+
 		else if (przyciskRenew->isClicked(event, window))
-		{
 			this->set_renew(true);
-		}
+
 		else if (przyciskBackToMenu->isClicked(event, window))
 		{
 			menu->set_menu_start(true);
@@ -143,11 +125,9 @@ void UserInterface::inGameUI(sf::Event& event, sf::RenderWindow& window, unsigne
 void UserInterface::helpMenu(sf::Event& event, sf::RenderWindow& window)
 {
 	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F1)
-	{
 		helpMenuBool = true;
-	}	
 
-	if (helpMenuBool == true)
+	if (helpMenuBool)
 	{
 		this->putShadow(window);
 		Pause = true;
@@ -162,14 +142,14 @@ void UserInterface::helpMenu(sf::Event& event, sf::RenderWindow& window)
 	}
 }
 
-bool UserInterface::endGameMenu(bool isDead,sf::Event& event, sf::RenderWindow &window)
+bool UserInterface::endGameMenu(const bool isDead,sf::Event& event, sf::RenderWindow &window)
 {
-	if (isDead == true)
+	if (isDead)
 	{
 		this->putShadow(window);
 		window.draw(gameOver);
 		endGameBackToMenu->draw(window);
-		if (endGameBackToMenu->isClicked(event, window) == true)
+		if (endGameBackToMenu->isClicked(event, window))
 		{
 			std::cout << "isclicked";
 			return true;
@@ -182,22 +162,18 @@ void UserInterface::playersScore(sf::Event& event, sf::RenderWindow& window)
 {
 	set_number(playerNumber, sf::Color::White, 30);
 
-	int i = 0;
-	int j;
-
 	std::string number;
 	std::string diamondsS;
 	std::string ironS;
 
-	for (auto& gracz : gracze)
+	for (unsigned int i = 0; i < gracze.size(); i++)
 	{
 		std::stringstream ssDiamonds;
 		std::stringstream ssIron;
 		std::stringstream ssNumber;
-		j = i + 1;
-		ssNumber << j;
-		ssDiamonds << gracz.diamondsCounted;
-		ssIron << gracz.ironCounted;
+		ssNumber << i + 1;
+		ssDiamonds << gracze[i].diamondsCounted;
+		ssIron << gracze[i].ironCounted;
 
 		number = ssNumber.str();
 		diamondsS = ssDiamonds.str();
@@ -206,18 +182,14 @@ void UserInterface::playersScore(sf::Event& event, sf::RenderWindow& window)
 		diamonds.setString(diamondsS);
 		iron.setString(ironS);
 
-		if (gracz.difficulty == 1)
-		{
+		if (gracze[i].difficulty == 1)
 			difficultyText.setString("Latwy");
-		}
-		else if (gracz.difficulty == 2)
-		{
+
+		else if (gracze[i].difficulty == 2)
 			difficultyText.setString("Sredni");
-		}
-		else if (gracz.difficulty == 3)
-		{
+
+		else if (gracze[i].difficulty == 3)
 			difficultyText.setString("Trudny");
-		}
 
 		playerNumber.setString(number);
 
@@ -226,7 +198,6 @@ void UserInterface::playersScore(sf::Event& event, sf::RenderWindow& window)
 		iron.setPosition(1050.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
 		difficultyText.setPosition(1450.f, window.getSize().y / 6 * 2 + window.getSize().y / 12 * i);
 
-		i++;
 		window.draw(playerNumber);
 		window.draw(diamonds);
 		window.draw(iron);
@@ -269,7 +240,7 @@ void UserInterface::chooseDifficulty(sf::Event& event, sf::RenderWindow& window)
 	window.draw(escBack);
 }
 
-void UserInterface::save(sf::Event event, sf::Vector2f playerPos, std::vector<std::vector<int>> tilemap, sf::Vector2f lavaPos, unsigned int diamondsCount, unsigned int ironCount)
+void UserInterface::save(sf::Vector2f&& playerPos, std::vector<std::vector<int>>&& tilemap, sf::Vector2f&& lavaPos, unsigned int diamondsCount, unsigned int ironCount)
 {
 	std::ofstream savefile;
 	savefile.open("saves/save1.txt");
@@ -277,6 +248,7 @@ void UserInterface::save(sf::Event event, sf::Vector2f playerPos, std::vector<st
 	{
 		savefile << playerPos.x << "\n";
 		savefile << playerPos.y << "\n";
+
 		for (auto& tilerow : tilemap)
 		{
 			for (auto& tiles : tilerow)
@@ -298,7 +270,6 @@ void UserInterface::save(sf::Event event, sf::Vector2f playerPos, std::vector<st
 
 void UserInterface::savePlayers(unsigned int diamondsCount, unsigned int ironCount, unsigned int difficulty)
 {
-	
 		std::ofstream savePlayersfile;
 		std::string line;
 
@@ -356,7 +327,7 @@ void UserInterface::loadGame()
 		std::ifstream savefile("saves/save1.txt");
 		std::string line;
 		int typy;
-		int i = 0;
+		unsigned int i = 0;
 
 		if (savefile.is_open())
 		{
@@ -376,7 +347,7 @@ void UserInterface::loadGame()
 		loadedGamerPos.x = std::stof(lines[0]);
 		loadedGamerPos.y = std::stof(lines[1]);
 
-		for (int i = 2; i <= SAVE_FILE_LENGTH - 6; i++)
+		for (uint8_t i = 2; i <= SAVE_FILE_LENGTH - 6; i++)
 		{
 			std::vector<int> typy_kafli;
 			std::stringstream kafleString(lines[i]);
@@ -404,9 +375,9 @@ void UserInterface::loadPlayers()
 		std::fstream savePlayersfileReadingC("saves/players.txt", std::ios_base::in);
 		std::fstream savePlayersfileReading("saves/players.txt", std::ios_base::in);
 		std::string line;
-		int j = 0;
-		int lines = 0;
-		int output[15];
+		unsigned int j = 0;
+		unsigned int lines = 0;
+		unsigned int output[15];
 
 		if (savePlayersfileReading.is_open())
 		{
@@ -419,7 +390,7 @@ void UserInterface::loadPlayers()
 
 		if (savePlayersfileReading.is_open() && lines != 0)
 		{
-			for (int i = 0; i < lines; i++)
+			for (unsigned int i = 0; i < lines; i++)
 			{
 				savePlayersfileReading >> output[j];
 				savePlayersfileReading >> output[j + 1];
@@ -447,7 +418,7 @@ void UserInterface::putShadow(sf::RenderWindow& window)
 
 void UserInterface::leaveQuestion(sf::Event& event, sf::RenderWindow& window)
 {
-	if (escape == true)
+	if (escape)
 	{
 		this->putShadow(window);
 		escape = true;
@@ -493,7 +464,7 @@ unsigned int UserInterface::get_difficulty()
 	return difficulty;
 }
 
-void UserInterface::set_Pause(bool Pause)
+void UserInterface::set_Pause(const bool Pause)
 {
 	this->Pause = Pause;
 }
