@@ -4,8 +4,8 @@
 
 class Positionable : public Entity_iface
 {
-public:
-	virtual void draw(sf::RenderWindow& window) override {};
-	virtual void setPosition(sf::Vector2f entityPos) = 0;
-	virtual void setPositionDefault() = 0;
+  public:
+    virtual void draw(sf::RenderWindow& window) override {};
+    virtual void setPosition(sf::Vector2f entityPos) = 0;
+    virtual void setPositionDefault() = 0;
 };
